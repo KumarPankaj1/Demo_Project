@@ -22,31 +22,52 @@ class userServiceClass {
             // channel: req.body.channel,
             channel: "sms",
           });
-        return Promise.resolve(response);
+        return Promise.resolve(STATUS_MSG.SUCCESS.OTP_GENERATE_SUCCESFULLY);
       }
-    } catch (err) {
-      Promise.reject(err);
+    } catch (err:any) {
+      return Promise.reject(STATUS_MSG.ERROR.INVALID_PHONENUMBER);
     }
   }
 
   async verifyOtp(data: any) {
     try {
-      if (data.PhoneNumber && data.code.length === 6) {
+      if (data.PhoneNumber && data.code.length === 4) {
         const response = await client.verify
           .services(process.env.SERVICE_ID)
           .verificationChecks.create({
             to: `+${data.PhoneNumber}`,
             code: data.code,
           });
-        console.log(response.status);
-
+         
         return Promise.resolve(response);
       }
     } catch (err) {
-      console.log(err);
       return Promise.reject(err);
     }
   }
+
+  // async loginVerifyOtp(data: any) {
+  //   try {
+  //     const userExist = await User.findOne({
+  //       PhoneNumber: data.PhoneNumber,
+  //     });
+  //     if(userExist) {
+  //     if (data.code.length === 4) {
+  //       const response = await client.verify
+  //         .services(process.env.SERVICE_ID)
+  //         .verificationChecks.create({
+  //           to: `+${data.PhoneNumber}`,
+  //           code: data.code,
+  //         });
+  //       return Promise.resolve(response);
+  //     }}
+  //     else{
+  //       return Promise.reject(STATUS_MSG.ERROR.NOT_EXIST("user"));
+  //     }
+  //   } catch (err) {
+  //     return Promise.reject(err);
+  //   }
+  // }
 
   async userSignup(data: any) {
     try {
@@ -54,8 +75,7 @@ class userServiceClass {
         PhoneNumber: data.PhoneNumber,
       });
       if (userExist) {
-        return Promise.reject("alraedy exist");
-        //throw new Error(STATUS_MSG.ERROR.TOKEN_ALREADY_EXIST.message);
+        return Promise.reject(STATUS_MSG.ERROR.ALREADY_EXIST("Already"));
       }
       let Data = new User({
         PhoneNumber: data.PhoneNumber,
@@ -63,9 +83,10 @@ class userServiceClass {
       });
       let user: any = await Data.save();
       let token = jwt.sign({ _id: user._id }, <string>process.env.SECRET_KEY);
-      return Promise.resolve({ user, token });
+      const statusData = STATUS_MSG.SUCCESS.CREATED({ token: token });
+      return Promise.resolve(statusData);
     } catch (err) {
-      return Promise.reject(err);
+      return Promise.reject(STATUS_MSG.ERROR.INCORECT_INFORMATION);
     }
   }
 
@@ -78,12 +99,12 @@ class userServiceClass {
             { _id: user._id },
             <string>process.env.SECRET_KEY
           );
-          return Promise.resolve({ user, newtoken });
+          return Promise.resolve(STATUS_MSG.SUCCESS.USER_LOGGED_IN_SUCCESFULLY({newtoken:newtoken}));
         } else {
-          return Promise.reject("user already logged in");
+          return Promise.reject(STATUS_MSG.ERROR.ALREADY_LOGGEDIN("user"));
         }
       } else {
-        return Promise.reject("user does't exist");
+        return Promise.reject(STATUS_MSG.ERROR.NOT_EXIST("user"));
       }
     } catch (err) {
       return Promise.reject(err);
@@ -92,7 +113,7 @@ class userServiceClass {
 
   async userProfileCreate(id: any, data: any) {
     console.log(id);
-    
+
     try {
       const user = await User.findByIdAndUpdate(
         id,
@@ -117,9 +138,7 @@ class userServiceClass {
           new: true,
         }
       );
-      console.log(user);
-      
-      return Promise.resolve(user);
+      return Promise.resolve(STATUS_MSG.SUCCESS.USER_CREATED);
     } catch (err) {
       return Promise.reject(err);
     }
@@ -136,7 +155,7 @@ class userServiceClass {
           new: true,
         }
       );
-      return Promise.resolve(user);
+      return Promise.resolve(STATUS_MSG.SUCCESS.USER_IMAGE_UPLOADED);
     } catch (err) {
       return Promise.reject(err);
     }

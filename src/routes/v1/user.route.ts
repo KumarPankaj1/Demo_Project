@@ -2,8 +2,6 @@ import express , {Request, Response, Router} from 'express';
 import cookieParser from 'cookie-parser';
 import {upload} from '../../middleware/user.middleware';
 import {User} from '../../entity/v1/user.entity';
-// import {Admin} from '../../entity/v1/admin.entity';
-// import { validators  } from '../../middleware/validator.middleware';
 import { userSignupValidator, userLoginValidator,userProfileCreateValidator} from '../../utils/validator';
 import {auth,auth_Login} from '../../middleware/user.middleware';
 import swaggerjsDoc from 'swagger-jsdoc';
@@ -34,13 +32,18 @@ const options = {
       components: {
         securitySchemes: {
             bearerAuth: {
-                type: "http",
-                name: "x-auth-token",
+                type: "apiKey",
+                name: "authorization",
                 scheme: "bearer",
                 in: "header",
             },
         },
-    }
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     },
     apis: ['./src/routes/v1/*.ts'], // files containing annotations as above
   };

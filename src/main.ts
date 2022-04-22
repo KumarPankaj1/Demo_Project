@@ -10,7 +10,7 @@ import connection from './config/mongodb';
 import * as Router from './routes/index';
 const app = express();
 app.use(express.json()); 
-console.log(process.env.PORT);
+// console.log(process.env.PORT);
 
 const port = 4000;
 connection();

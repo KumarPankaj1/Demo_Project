@@ -13,12 +13,12 @@ const auth_Login = async (
   next: express.NextFunction
 ) => {
   try {
-    const token = req.cookies.jwt;
+    let token:any = req.headers["authorization"];
+    req.body.token = token;
     if (token == undefined) {
       next();
     } else {
       const verifyUser = jwt.verify(token, <string>process.env.SECRET_KEY);
-      // console.log(verifyUser);
       next();
     }
   } catch (err) {
@@ -33,16 +33,11 @@ const auth = async (
   next: express.NextFunction
 ) => {
   try {
-    const token = req.cookies.jwt;
-    // console.log(token);
-
-    const verifyUser: any = jwt.verify(token, <string>process.env.SECRET_KEY);
-    // console.log(verifyUser);
+    let token: any = req.headers["authorization"];
+    console.log(token);
     
-
+    const verifyUser: any = jwt.verify(token, <string>process.env.SECRET_KEY);
     req.body.id = verifyUser._id;
-    // console.log(req.body.id);
-
     next();
   } catch (err) {
     console.log(err);

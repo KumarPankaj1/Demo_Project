@@ -73,8 +73,14 @@ export let STATUS_MSG = {
         INVALID_CREDENTIALS: {
             statusCode: 400,
             success: false,
-            type: 'INVALID_PASSWORD',
-            message: 'The email or password you entered is incorrect.'
+            type: 'INVALID_CREDENTIALS',
+            message: 'The otp you entered is incorrect.'
+        },
+        INVALID_PHONENUMBER: {
+            statusCode: 400,
+            success: false,
+            type: 'INVALID_CREDENTIALS',
+            message: 'The phoneNumber you entered is incorrect.'
         },
         PAGE_NOT_FOUND: {
             statusCode: 400,
@@ -82,7 +88,12 @@ export let STATUS_MSG = {
             type: 'PAGE_NOT_FOUND',
             message: 'Page not found!'
         },
-
+        INCORECT_INFORMATION: {
+            statusCode: 400,
+            success: false,
+            type: 'INVALID_INFORMATION',
+            message: 'The information you entered is not valid.'
+        },
         TOKEN_ALREADY_EXPIRED: {
             statusCode: 408,
             success: false,
@@ -107,7 +118,6 @@ export let STATUS_MSG = {
             message: 'Invalid token provided',
             type: 'INVALID_TOKEN'
         },
-
 
         UNAUTHORIZED: {
             statusCode: 401,
@@ -151,6 +161,22 @@ export let STATUS_MSG = {
                 type: 'BAD_REQUEST'
             }
         },
+        ALREADY_EXIST: (title: string) => {
+            return {
+                statusCode: 400,
+                success: false,
+                message: `${title}  exist!`,
+                type: 'BAD_REQUEST'
+            }
+        },
+        ALREADY_LOGGEDIN: (title: string) => {
+            return {
+                statusCode: 400,
+                success: false,
+                message: `${title}  already exist`,
+                type: 'BAD_REQUEST'
+            }
+        },
         ACTION_NOT_ALLOWED: {
             statusCode: 406,
             success: false,
@@ -173,12 +199,6 @@ export let STATUS_MSG = {
             success: true,
             message: 'Success',
             name: 'DEFAULT'
-        },
-        CREATED: {
-            statusCode: 200,
-            success: true,
-            message: 'Created Successfully',
-            type: 'CREATED'
         },
         PROFILE_UPDATED: {
             statusCode: 200,
@@ -210,6 +230,21 @@ export let STATUS_MSG = {
             message: 'No record found.',
             type: 'DEFAULT'
         },
+        CREATED:(msg?: any) => {
+            return {
+            statusCode: 200,
+            success: true,
+            message: "created Successfully",
+            type: 'CREATED',
+            data: msg
+            }
+        },
+        USER_CREATED:{
+            statusCode: 200,
+            success: true,
+            message: "user created Successfully",
+            type: 'CREATED',
+        },
         UPDATE_SUCCESS: (title: string) => {
             return {
                 statusCode: 200,
@@ -218,13 +253,34 @@ export let STATUS_MSG = {
                 type: 'UPDATE_SUCCESS'
             }
         },
-        FETCH_SUCCESS: (msg: string) => {
+        USER_IMAGE_UPLOADED: {
+                statusCode: 200,
+                success: true,
+                message: 'user image upload successfully',
+                type: 'UPDATE_SUCCESS'
+        },
+        FETCH_SUCCESS: (msg:any) => {
             return {
                 statusCode: 200,
                 success: true,
                 message: msg,
                 type: 'FETCH_SUCCESS'
             }
+        },
+        OTP_GENERATE_SUCCESFULLY:  {
+                statusCode: 200,
+                success: true,
+                message: "'Otp has been send on your phoneNumber Successfully'",
+                type: 'OTP_GENERATE_SUCCESFULLY'
+        },
+        USER_LOGGED_IN_SUCCESFULLY: (msg:any)=>{
+            return{
+            statusCode: 200,
+            success: true,
+            message: "Login Successfully",
+            type: 'LOGIN_SUCCESS',
+            data: msg
         }
-    },
+    }
+        }
 }

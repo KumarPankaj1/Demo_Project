@@ -12,7 +12,7 @@ const userSignupValidator = [
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty())
-      return res.status(402).json({ errors: errors.array() });
+      return res.status(402).json({ errors: errors.array()});
     next();
   },
 ];
