@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { check, validationResult } from "express-validator";
 const userSignupValidator = [
-  check("PhoneNumber")
+  check("phoneNumber")
     .not()
     .isEmpty()
     .withMessage("User name can not be empty!")
@@ -18,7 +18,7 @@ const userSignupValidator = [
 ];
 
 const userLoginValidator = [
-  check("PhoneNumber")
+  check("phoneNumber")
   .not()
   .isEmpty()
   .withMessage("User name can not be empty!")
@@ -35,7 +35,7 @@ const userLoginValidator = [
 ];
 
 const userProfileCreateValidator = [
-    check("Username")
+    check("username")
     .not()
     .trim()
     .isEmpty()

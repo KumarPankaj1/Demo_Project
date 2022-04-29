@@ -1,16 +1,12 @@
 import multer from "multer";
 import path from "path";
-import jwt from "jsonwebtoken";
-import express, { Request, Response, NextFunction } from "express";
-import cookieParser from "cookie-parser";
-const app = express();
-app.use(express.json());
-app.use(cookieParser());
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
 
 const auth_Login = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {
   try {
     let token:any = req.headers["authorization"];
@@ -28,16 +24,16 @@ const auth_Login = async (
 };
 
 const auth = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {
   try {
-    let token: any = req.headers["authorization"];
-    console.log(token);
-    
+    let token:any = req.headers["authorization"];
     const verifyUser: any = jwt.verify(token, <string>process.env.SECRET_KEY);
-    req.body.id = verifyUser._id;
+    req.body._id = verifyUser._id;
+    console.log(process.cwd());
+    
     next();
   } catch (err) {
     console.log(err);
@@ -46,7 +42,9 @@ const auth = async (
 };
 
 const storage = multer.diskStorage({
-  destination: `${__dirname}/../uploads/public`,
+  destination: `./uploads/public`,
+  // console.log(process.cwd());
+  
   filename: (req: any, file: any, cb: any) => {
     return cb(
       null,
@@ -54,12 +52,64 @@ const storage = multer.diskStorage({
     );
   },
 });
+// console.log(process.cwd());
 
 const upload = multer({
   storage: storage,
 });
 
 export { upload, auth, auth_Login };
+
+
+// import { STATUS_MSG } from "../constant/app.constant";
+// import { SessionModel } from "../models/session.model";
+// import { redis } from "../config/redis.db";
+// import { ISession } from "../interfaces/models.interface";
+
+// export default async function session(
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ): Promise<void> {
+//   try {
+//     const token: string | undefined = req.headers.authorization;
+//     if (!token) {
+//       throw new Error("Token required for validation");
+//     }
+//     const tokenData:any = jwt.verify(token, <string>process.env.SECRET_KEY);
+//     if (tokenData && tokenData.userId) {
+//       const details: ISession.tokenDetails = await redis.findSession(
+//         tokenData.userId
+//       );
+
+//       if (details && details.sessionId == tokenData.sessionId) {
+//         req.body.idFromAuth = tokenData.userId;
+//         next();
+//       } else {
+//         const sessions: ISession | null =await SessionModel.findById(tokenData.sessionId);
+//         if (sessions?.isActive == true && sessions.isLoggedIn == true) {
+//           req.body.idFromAuth = sessions.userId;
+//           next();
+//         } else if (sessions == null || sessions.isLoggedIn == false) {
+//           res
+//             .status(403)
+//             .json(
+//               STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE(
+//                 "Please login, session expired"
+//               )
+//             );
+//         } else {
+//           res.status(403).json(STATUS_MSG.ERROR.BLOCKED_ACCOUNT);
+//         }
+//       }
+//     }
+//   } catch (err: any) {
+//     res
+//       .status(401)
+//       .json(STATUS_MSG.ERROR.MISSINING_AUTHENTICATION(err.message));
+//   }
+// }
+
 
 //with the help of Bearer
 

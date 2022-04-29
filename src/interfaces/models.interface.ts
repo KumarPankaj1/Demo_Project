@@ -1,13 +1,16 @@
+import { Document, Types } from "mongoose";
+
 export interface IUser {
-    Username: String,
-    ProfileUrl:String,
-    PhoneNumber: Number,
-    DateOfBirth: Date,
-    Gender: String,
-    UserType: Number,
-    Location: Object,
-    DistrictOfCurrentLocation: Object,
-    DistrictOfPermanentLocation: Object
+    username: string,
+    profileUrl:string,
+    phoneNumber: number,
+    dateOfBirth: Date,
+    emailAddress: string,
+    gender: string,
+    userType: number,
+    location: Object,
+    districtOfCurrentLocation: Object,
+    districtOfPermanentLocation: Object
 }
 
 export interface IAdmin {
@@ -54,4 +57,22 @@ export interface IResult {
     rating: Number,
     createdAt: Date,
     updatedAt: Date
+}
+
+
+
+export namespace ISession {
+  export interface CreateData {
+    deviceId: string;
+    deviceToken?: string;
+  }
+  export interface Doc extends Document, CreateData {
+    userId: Types.ObjectId;
+    isActive: boolean;
+  }
+  export enum LogoutTarget {
+    Single = "single",
+    Device = "device",
+    All = "all",
+  }
 }

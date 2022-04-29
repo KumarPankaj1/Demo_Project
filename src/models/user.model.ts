@@ -8,57 +8,61 @@ import { IUser } from '../interfaces/models.interface';
 //   });
 
 const userSchema = new Schema<IUser>({
-    Username:{
+    username:{
         type:SchemaTypes.String,
     },
     //profile_pic
-    ProfileUrl:{
+    profileUrl:{
       type:SchemaTypes.String
     },
-    PhoneNumber:{
+    phoneNumber:{
         type:SchemaTypes.Number,
         required: true,
         unique: true
      },
-    DateOfBirth:{
+    dateOfBirth:{
         type:SchemaTypes.Date,
     },
-    //enum number
-    Gender:{
+    emailAddress:{
+      type:SchemaTypes.String
+    },
+    gender:{
         type:SchemaTypes.String,
         enum:DBENUMS.GENDER,
     },
-    Location: {
+    location: {
         type: {
           type: String, // Don't do `{ location: { type: String } }`
-          enum: ['Point'], // 'location.type' must be 'Point'
+          enum: ['Point'],
+          default:'Point'// 'location.type' must be 'Point'
         },
         coordinates: {
           type: [Number],
         }
     },
-    DistrictOfCurrentLocation: {
+    districtOfCurrentLocation: {
         type: {
           type: String, 
           enum: ['Point'], 
+          default:'Point'
         },
         coordinates: {
           type: [Number],
         }
     },
-    DistrictOfPermanentLocation: {
+    districtOfPermanentLocation: {
         type: {
           type: String, 
           enum: ['Point'], 
+          default:'Point'
         },
         coordinates: {
           type: [Number],
         }
     },
-    UserType:{
+    userType:{
         type:SchemaTypes.Number,
-        enum:DBENUMS.ROLE,
-        required: true
+        enum:DBENUMS.USERTYPE,
     },
   },{
     timestamps: true

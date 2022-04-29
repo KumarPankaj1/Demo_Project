@@ -19,7 +19,7 @@ export const DBENUMS = {
         INACTIVE:2,
         DELETED:3
     },
-    ROLE: {
+    USERTYPE: {
         'USER':1,
         'CONTRACTOR':2,
         'OTHER':3

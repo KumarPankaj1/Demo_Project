@@ -1,21 +1,12 @@
-import express , {Request, Response, Router} from 'express';
-import cookieParser from 'cookie-parser';
+import express from 'express';
 import {upload} from '../../middleware/user.middleware';
-import {User} from '../../entity/v1/user.entity';
+import {User} from '../../controller/v1/user.controller';
 import { userSignupValidator, userLoginValidator,userProfileCreateValidator} from '../../utils/validator';
 import {auth,auth_Login} from '../../middleware/user.middleware';
 import swaggerjsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
 const router = express.Router();
-const app = express();
-app.use(express.json());
-router.use(cookieParser());
-// console.log(userProfileCreateValidator);
-
-
-
-
 
 const options = {
     definition: {
@@ -51,98 +42,95 @@ const options = {
 const openapiSpecification = swaggerjsDoc(options);
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
-router.route('/user/generateOtp').post(User.userGenerateOtp);
-router.route('/user/Signup').post(userSignupValidator,User.userSignup);
+router.route('/generateOtp').post(User.userGenerateOtp);
 router.route('/user/Login').post(auth_Login,userLoginValidator,User.userLogin);
-router.route('/user/profileCreate').patch(auth,userProfileCreateValidator,User.userProfileCreate);
-router.route('/user/imageUpload').patch(upload.single('profile_pic'),auth,User.userImageUpload);
+router.route('/user/profileCreate').put(auth,userProfileCreateValidator,User.userProfileCreate);
+router.route('/user/profilePicUpload').put(upload.single('profile_pic'),auth,User.profilePicUpload);
 
 /**
  * @swagger
- *  components:
- *      schema:
- *          user:
- *              type: object
- *              properties:
- *                  Username:
- *                     type: String
- *                     example: pankaj
- *                  DateOfBirth:
- *                      type: Date
- *                      exapmle: 01/02/2000
- *                  Gender:
- *                      type: Number
- *                      example: 1
- *                  latt1:
- *                      type: Number
- *                      example: 12.27
- *                  long1:
- *                      type: Number
- *                      example: 12.37
- *                  latt2:
- *                      type: Number
- *                      example: 13.27
- *                  long2:
- *                      type: Number
- *                      example: 13.37
- *                  latt3:
- *                      type: Number
- *                      example: 14.27
- *                  long3:
- *                      type: Number
- *                      example: 14.37
+ * tags:
+ *   - name: OnboardingApi's
+ *     description: Routes to login or create complete profile for a new user.
  */
 
 /**
  * @swagger
  *  components:
- *      schema:
+ *      schemas:
  *          otpgen:
  *              type: object
  *              properties:
- *                  PhoneNumber: 
+ *                  phoneNumber: 
  *                      type: Number
  *                      example: 916397471669
  */
 
-/**
- * @swagger
- *  components:
- *      schema:
- *          signup:
- *              type: object
- *              properties:
- *                  PhoneNumber: 
- *                      type: Number
- *                      example: 916397471669
- *                  code:
- *                    type: Number
- *                    example: 123456
- *                  UserType:
- *                      type: Number
- *                      example: 1
- */
 
 /**
  * @swagger
  *  components:
- *      schema:
+ *      schemas:
  *          login:
  *              type: object
  *              properties:
- *                  PhoneNumber: 
+ *                  phoneNumber: 
  *                      type: Number
  *                      example: 916397471669
  *                  code:
  *                    type: Number
- *                    example: 123456
+ *                    example: 1234
  */
 
 /**
  * @swagger
  *  components:
- *      schema:
- *          imageUpload:
+ *      schemas:
+ *          profileCreate:
+ *              type: object
+ *              properties:
+ *                  username:
+ *                     type: String
+ *                     example: pankaj
+ *                  dateOfBirth:
+ *                      type: Date
+ *                      exapmle: 01/02/2000
+ *                  gender:
+ *                      type: Number
+ *                      example: 1
+ *                  emailAddress:
+ *                      type: String
+ *                      example: "firstname.lastname@appinventiv.com"
+ *                  locationLattitude:
+ *                      type: Number
+ *                      example: 12.27
+ *                  locationLongitude:
+ *                      type: Number
+ *                      example: 12.37
+ *                  districtOfCurrentLocationLattitude:
+ *                      type: Number
+ *                      example: 13.27
+ *                  districtOfCurrentLocationLongitude:
+ *                      type: Number
+ *                      example: 13.37
+ *                  districtOfPermanentLocationLattitude:
+ *                      type: Number
+ *                      example: 14.27
+ *                  districtOfPermanenttLocationLongitude:
+ *                      type: Number
+ *                      example: 14.37
+ *                  userType:
+ *                      type: Number
+ *                      example: "1"
+ */
+
+
+
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          profilePicUpload:
  *              type: object
  *              properties:
  *                  profile_pic:
@@ -155,51 +143,37 @@ router.route('/user/imageUpload').patch(upload.single('profile_pic'),auth,User.u
 
 /**
  * @swagger
- * /user/generateOtp:
+ * /generateOtp:
  *        post:
  *           summary: used to generate otp from phonenumber
+ *           tags: [OnboardingApi's]
  *           description: This api is used for otp generation
  *           requestBody:
  *               required: true
  *               content:
  *                   application/json:
  *                       schema:
- *                            $ref: '#components/schema/otpgen'               
+ *                            $ref: '#components/schemas/otpgen'               
  *           responses:
  *                200:
  *                  description: otp generate successfully
  */
 
 
-/**
- * @swagger
- * /user/Signup:
- *        post:
- *           summary: used to register user
- *           description: This api is used for registration
- *           requestBody:
- *               required: true
- *               content:
- *                   application/json:
- *                       schema:
- *                            $ref: '#components/schema/signup'               
- *           responses:
- *                200:
- *                  description: sign up successfully
- */
 
 /**
  * @swagger
  * /user/Login:
  *        post:
  *           summary: used to login user
+ *           tags: [OnboardingApi's]
  *           description: This api is used for login
  *           requestBody:
  *               required: true
  *               content:
  *                   application/json:
  *                       schema:
- *                            $ref: '#components/schema/login'               
+ *                            $ref: '#components/schemas/login'               
  *           responses:
  *                200:
  *                  description: login successfully
@@ -209,15 +183,16 @@ router.route('/user/imageUpload').patch(upload.single('profile_pic'),auth,User.u
 /**
  * @swagger
  * /user/profileCreate:
- *        patch:
+ *        put:
  *           summary: used to verify otp and for creation user account
+ *           tags: [OnboardingApi's]
  *           description: This api is used for user account creation
  *           requestBody:
  *               required: true
  *               content:
  *                   application/json:
  *                       schema:
- *                            $ref: '#components/schema/user'               
+ *                            $ref: '#components/schemas/profileCreate'               
  *           responses:
  *                200:
  *                  description: user profile created successfully
@@ -225,16 +200,17 @@ router.route('/user/imageUpload').patch(upload.single('profile_pic'),auth,User.u
 
 /**
  * @swagger
- * /user/imageUpload:
- *        patch:
+ * /user/profilePicUpload:
+ *        put:
  *           summary: used to image upload
+ *           tags: [OnboardingApi's]
  *           description: This api is used for user image upload
  *           requestBody:
  *               required: true
  *               content:
  *                   multipart/form-data:
  *                       schema:
- *                            $ref: '#components/schema/imageUpload'               
+ *                            $ref: '#components/schemas/profilePicUpload'               
  *           responses:
  *                200:
  *                  description: user image upload successfully
