@@ -4,7 +4,7 @@ import { twilioService } from "../../services/twilio.service";
 import { adminEntity } from "../../entity/v1/admin.entity";
 import { sendErrorResponse } from "./../../utils/errorhandler";
 import { sendResponse, SendErrorResponse } from "./../../utils/response";
-import { IAdmin} from "../../interfaces/models.interface";
+import { IAdmin } from "../../interfaces/models.interface";
 import { sessionService } from "../../services/session.service";
 
 class adminClass {
@@ -40,15 +40,17 @@ class adminClass {
             res,
             STATUS_MSG.SUCCESS.USER_LOGGED_IN({ token: token })
           );
+        } else {
+          const admin = await adminEntity.userInsert(req.body);
+          const token = await sessionService.create(admin._id, {
+            deviceId: "0",
+            deviceToken: "0",
+            userType: DBENUMS.ADMIN.SUPER_ADMIN,
+          });
+          sendResponse(res, STATUS_MSG.SUCCESS.CREATED({ token: token }));
         }
       } else {
-        const admin = await adminEntity.userInsert(req.body);
-        const token = await sessionService.create(admin._id, {
-          deviceId: "0",
-          deviceToken: "0",
-          userType: DBENUMS.USERTYPE.USER,
-        });
-        sendResponse(res, STATUS_MSG.SUCCESS.CREATED({ token: token }));
+        SendErrorResponse(res, STATUS_MSG.ERROR.INVALID_CREDENTIALS);
       }
     } catch (err: any) {
       const errData: any = sendErrorResponse(err);
@@ -58,7 +60,7 @@ class adminClass {
 
   async adminProfileCreate(req: Request, res: Response): Promise<void> {
     try {
-      let admin: IAdmin | null = await adminEntity.profileCreate(req.body);
+      let admin: IAdmin | null = await adminEntity.profileCreate(req.body,req.user);
       if (admin) {
         sendResponse(res, STATUS_MSG.SUCCESS.USER_CREATED);
       } else {
@@ -73,7 +75,7 @@ class adminClass {
   async profilePicUpload(req: Request, res: Response): Promise<void> {
     try {
       let admin: IAdmin | null = await adminEntity.adminImageUpload(
-        req.body._id,
+        req.user,
         req.file
       );
       if (admin) {
@@ -83,7 +85,7 @@ class adminClass {
       console.log(err);
       SendErrorResponse(res, err);
     }
-  }  
+  }
 }
 
 export const Admin = new adminClass();

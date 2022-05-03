@@ -1,7 +1,7 @@
 import express from 'express';
 import {imageUpload} from '../../middleware/multer.middleware';
 import {Admin} from '../../controller/v1/admin.controller';
-import {validators} from '../../middleware/validator.middleware';
+import {adminValidators} from '../../middleware/adminValidator.middleware';
 import {auth} from '../../middleware/user.middleware';
 import swaggerjsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
@@ -43,8 +43,8 @@ const openapiSpecification = swaggerjsDoc(options);
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
 router.route('/admin/generateOtp').post(Admin.adminGenerateOtp);
-router.route('/admin/Login').post(validators.loginValidator,Admin.adminLogin);
-router.route('/admin/profileCreate').put(validators.ProfileCreateValidator,auth,Admin.adminProfileCreate);
+router.route('/admin/Login').post(adminValidators.loginValidator,Admin.adminLogin);
+router.route('/admin/profileCreate').put(adminValidators.ProfileCreateValidator,auth,Admin.adminProfileCreate);
 router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),auth,Admin.profilePicUpload);
 
 /**
@@ -58,7 +58,7 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  * @swagger
  *  components:
  *      schemas:
- *          otpgen:
+ *          adminOtpgen:
  *              type: object
  *              properties:
  *                  phoneNumber: 
@@ -71,7 +71,7 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  * @swagger
  *  components:
  *      schemas:
- *          login:
+ *          adminLogin:
  *              type: object
  *              properties:
  *                  phoneNumber: 
@@ -86,7 +86,7 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  * @swagger
  *  components:
  *      schemas:
- *          profileCreate:
+ *          adminProfileCreate:
  *              type: object
  *              properties:
  *                  adminName:
@@ -130,7 +130,7 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  * @swagger
  *  components:
  *      schemas:
- *          profilePicUpload:
+ *          adminProfilePicUpload:
  *              type: object
  *              properties:
  *                  profile_pic:
@@ -141,7 +141,7 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
 
 /**
  * @swagger
- * admin/generateOtp:
+ * /admin/generateOtp:
  *        post:
  *           summary: used to generate otp from phonenumber
  *           tags: [OnboardingApi's For Admin]
@@ -151,7 +151,7 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  *               content:
  *                   application/json:
  *                       schema:
- *                            $ref: '#components/schemas/otpgen'               
+ *                            $ref: '#components/schemas/adminOtpgen'               
  *           responses:
  *                200:
  *                  description: otp generate successfully
@@ -171,7 +171,7 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  *               content:
  *                   application/json:
  *                       schema:
- *                            $ref: '#components/schemas/login'               
+ *                            $ref: '#components/schemas/adminLogin'               
  *           responses:
  *                200:
  *                  description: login successfully
@@ -190,25 +190,26 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  *               content:
  *                   application/json:
  *                       schema:
- *                            $ref: '#components/schemas/profileCreate'               
+ *                            $ref: '#components/schemas/adminProfileCreate'               
  *           responses:
  *                200:
  *                  description: admin profile created successfully
  */
 
+
 /**
  * @swagger
- * /user/profilePicUpload:
+ * /admin/profilePicUpload:
  *        put:
  *           summary: used to image upload
  *           tags: [OnboardingApi's For Admin]
- *           description: This api is used for admin image upload
+ *           description: This api is used for user image upload
  *           requestBody:
  *               required: true
  *               content:
  *                   multipart/form-data:
  *                       schema:
- *                            $ref: '#components/schemas/profilePicUpload'               
+ *                            $ref: '#components/schemas/adminProfilePicUpload'               
  *           responses:
  *                200:
  *                  description: admin image upload successfully

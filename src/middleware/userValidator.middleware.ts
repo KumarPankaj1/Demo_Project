@@ -1,10 +1,10 @@
-import { validator } from "../utils/validator";
+import { userValidator } from "../utils/user.validator";
 import { Request, Response, NextFunction } from "express";
 
-class validatorClass {
+class userValidatorClass {
   signupValidator = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await validator.Signup.validateAsync(req.body);
+      await userValidator.Signup.validateAsync(req.body);
       next();
     } catch (err: any) {
       res.status(400).json({ error: err.message });
@@ -12,7 +12,7 @@ class validatorClass {
   };
   loginValidator = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await validator.LogIn.validateAsync(req.body);
+      await userValidator.LogIn.validateAsync(req.body);
       next();
     } catch (err: any) {
       res.status(400).json({ error: err.message });
@@ -24,7 +24,7 @@ class validatorClass {
     next: NextFunction
   ) => {
     try {
-      await validator.ProfileCreate.validateAsync(req.body);
+      await userValidator.ProfileCreate.validateAsync(req.body);
       next();
     } catch (err: any) {
       res.status(400).json({ error: err.message });
@@ -32,4 +32,4 @@ class validatorClass {
   };
 }
 
-export const validators = new validatorClass();
+export const userValidators = new userValidatorClass();

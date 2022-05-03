@@ -1,7 +1,7 @@
 import Joi from "joi";
 // Joi.objectId = require('joi-objectid')(Joi)
 
-class validatorClass {
+class userValidatorClass {
 
   Signup = Joi.object({
     phoneNumber: Joi.number().min(12).required(),
@@ -13,7 +13,6 @@ class validatorClass {
   });
 
   ProfileCreate = Joi.object({
-    id:Joi.string,
     username: Joi.string().trim().min(3).max(15).lowercase().required(),
     dateOfBirth: Joi.date(),
     emailAddress: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
@@ -28,7 +27,7 @@ class validatorClass {
 });
 }
 
-export const validator = new validatorClass();
+export const userValidator = new userValidatorClass();
 
 
 

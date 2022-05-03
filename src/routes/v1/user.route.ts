@@ -1,7 +1,7 @@
 import express from 'express';
 import {imageUpload,videoUpload} from '../../middleware/multer.middleware';
 import {User} from '../../controller/v1/user.controller';
-import {validators} from '../../middleware/validator.middleware';
+import {userValidators} from '../../middleware/userValidator.middleware';
 import {auth} from '../../middleware/user.middleware';
 import swaggerjsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
@@ -42,11 +42,11 @@ const options = {
 const openapiSpecification = swaggerjsDoc(options);
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
-router.route('/generateOtp').post(User.userGenerateOtp);
-router.route('/user/Login').post(validators.loginValidator,User.userLogin);
-router.route('/user/profileCreate').put(auth,validators.ProfileCreateValidator,User.userProfileCreate);
+router.route('user/generateOtp').post(User.userGenerateOtp);
+router.route('/user/Login').post(userValidators.loginValidator,User.userLogin);
+router.route('/user/profileCreate').put(userValidators.ProfileCreateValidator,auth,User.userProfileCreate);
 router.route('/user/profilePicUpload').put(imageUpload.single('profile_pic'),auth,User.profilePicUpload);
-router.route('/userWorkexperienceDeatilsCreated').post(auth,User.workExperienceDetails);
+router.route('/userWorkexperienceDeatilsCreated').post(auth,User.userWorkExperienceDetails);
 router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.userVideoUpload);
 
 /**
@@ -60,7 +60,7 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  * @swagger
  *  components:
  *      schemas:
- *          otpgen:
+ *          userOtpgen:
  *              type: object
  *              properties:
  *                  phoneNumber: 
@@ -73,7 +73,7 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  * @swagger
  *  components:
  *      schemas:
- *          login:
+ *          userLogin:
  *              type: object
  *              properties:
  *                  phoneNumber: 
@@ -88,7 +88,7 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  * @swagger
  *  components:
  *      schemas:
- *          profileCreate:
+ *          userProfileCreate:
  *              type: object
  *              properties:
  *                  username:
@@ -132,7 +132,7 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  * @swagger
  *  components:
  *      schemas:
- *          profilePicUpload:
+ *          userProfilePicUpload:
  *              type: object
  *              properties:
  *                  profile_pic:
@@ -153,7 +153,7 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  *               content:
  *                   application/json:
  *                       schema:
- *                            $ref: '#components/schemas/otpgen'               
+ *                            $ref: '#components/schemas/userOtpgen'               
  *           responses:
  *                200:
  *                  description: otp generate successfully
@@ -173,7 +173,7 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  *               content:
  *                   application/json:
  *                       schema:
- *                            $ref: '#components/schemas/login'               
+ *                            $ref: '#components/schemas/userLogin'               
  *           responses:
  *                200:
  *                  description: login successfully
@@ -192,7 +192,7 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  *               content:
  *                   application/json:
  *                       schema:
- *                            $ref: '#components/schemas/profileCreate'               
+ *                            $ref: '#components/schemas/userProfileCreate'               
  *           responses:
  *                200:
  *                  description: user profile created successfully
@@ -210,7 +210,7 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  *               content:
  *                   multipart/form-data:
  *                       schema:
- *                            $ref: '#components/schemas/profilePicUpload'               
+ *                            $ref: '#components/schemas/userProfilePicUpload'               
  *           responses:
  *                200:
  *                  description: user image upload successfully

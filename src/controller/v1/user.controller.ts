@@ -60,7 +60,7 @@ class userClass {
 
   async userProfileCreate(req: Request, res: Response): Promise<void> {
     try {
-      let user: IUser | null = await userEntity.profileCreate(req.body);
+      let user: IUser | null = await userEntity.profileCreate(req.body,req.user);
       if (user) {
         sendResponse(res, STATUS_MSG.SUCCESS.USER_CREATED);
       } else {
@@ -75,7 +75,7 @@ class userClass {
   async profilePicUpload(req: Request, res: Response): Promise<void> {
     try {
       let user: IUser | null = await userEntity.userImageUpload(
-        req.body._id,
+        req.user,
         req.file
       );
       if (user) {
@@ -87,7 +87,7 @@ class userClass {
     }
   }
 
-  async workExperienceDetails(
+  async userWorkExperienceDetails(
     req: Request,
     res: Response,
     next: NextFunction

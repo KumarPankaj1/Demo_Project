@@ -31,10 +31,10 @@ class adminEntityClass {
     }
   }
 
-  async profileCreate(data: any): Promise<IAdmin | null> {
+  async profileCreate(data: any,tokenData: any): Promise<IAdmin | null> {
     try {
       const admin: IAdmin | null = await this.Model.findByIdAndUpdate(
-        data._id,
+        tokenData.userId,
         {
           adminName: data.adminName,
           dateOfBirth: data.dateOfBirth,
@@ -70,10 +70,10 @@ class adminEntityClass {
     }
   }
 
-  async adminImageUpload(id: any, file: any): Promise<IAdmin | null> {
+  async adminImageUpload(tokenData: any, file: any): Promise<IAdmin | null> {
     try {
       const admin: IAdmin | null = await this.Model.findByIdAndUpdate(
-        id,
+        tokenData.userId,
         {
           profileUrl: `http://localhost:${process.env.PORT}/${file?.filename}`,
         },

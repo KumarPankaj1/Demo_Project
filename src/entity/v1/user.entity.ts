@@ -33,10 +33,10 @@ class userEntityClass {
     }
   }
 
-  async profileCreate(data: any): Promise<IUser|null>{
+  async profileCreate(data: any,tokenData: any) : Promise<IUser|null>{
     try {
       const user:IUser | null= await this.Model.findByIdAndUpdate(
-        data._id,
+        tokenData.userId,
         {
           username: data.username,
           dateOfBirth: data.dateOfBirth,
@@ -72,10 +72,10 @@ class userEntityClass {
     }
   }
 
-  async userImageUpload(id: any, file: any): Promise<IUser|null>{
+  async userImageUpload(tokenData: any, file: any): Promise<IUser|null>{
     try {
       const user: IUser| null = await this.Model.findByIdAndUpdate(
-        id,
+        tokenData.userId,
         {
           profileUrl: `http://localhost:${process.env.PORT}/${file?.filename}`,
         },
@@ -83,8 +83,6 @@ class userEntityClass {
           new: true,
         }
       );
-      console.log(user);
-
       return user;
     } catch (err) {
       return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
