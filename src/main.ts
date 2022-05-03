@@ -3,19 +3,20 @@ import path from 'path';
 import dotenv from 'dotenv/config';
 dotenv;
 import connection from './config/mongodb';
-import * as Router from './routes/index';
+import * as Router from './routes/index'
 const app = express();
 app.use(express.json()); 
-app.use(express.static(path.join(__dirname, '../uploads/public')));
+app.use(express.static(path.join(__dirname, '../uploads/videoUploads')));
 
 const port = process.env.PORT;
 connection();
 
 app.use('/', Router.userRoute.default);
+app.use('/',Router.adminRoute.default);
+
 
 app.listen(port,():void => {
-   console.log("listen to server");
-   
+   console.log("listen to server"); 
 });
 
 

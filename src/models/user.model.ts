@@ -34,7 +34,7 @@ const userSchema = new Schema<IUser>({
         type: {
           type: String, // Don't do `{ location: { type: String } }`
           enum: ['Point'],
-          default:'Point'// 'location.type' must be 'Point'
+          // default:'Point'// 'location.type' must be 'Point'
         },
         coordinates: {
           type: [Number],
@@ -44,7 +44,7 @@ const userSchema = new Schema<IUser>({
         type: {
           type: String, 
           enum: ['Point'], 
-          default:'Point'
+          // default:'Point'
         },
         coordinates: {
           type: [Number],
@@ -54,7 +54,7 @@ const userSchema = new Schema<IUser>({
         type: {
           type: String, 
           enum: ['Point'], 
-          default:'Point'
+          // default:'Point'
         },
         coordinates: {
           type: [Number],

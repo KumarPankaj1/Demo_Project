@@ -1,5 +1,6 @@
 import { Schema, Model, model, SchemaTypes } from "mongoose";
-import { ISession } from "../interfaces/models.interface";
+import {interfaceSession} from "../interfaces/session.interface";
+import {DBENUMS} from "../constant/app.constant"
 
 export const MODEL_NAME = "sessions";
 
@@ -22,14 +23,15 @@ const sesionSchema = new Schema(
       required: true,
       default: true,
     },
-    createdAt: {
-      type: SchemaTypes.Date,
-      default: () => new Date(),
+    isLoggedIn: {
+      type: SchemaTypes.Boolean,
+      required: true,
+      default: true,
     },
-    updatedAt: {
-      type: SchemaTypes.Date,
-      default: () => new Date(),
-    },
+    userType:{
+      type: SchemaTypes.String,
+      required: true,
+    }
   },
   {
     collection: MODEL_NAME,
@@ -37,7 +39,7 @@ const sesionSchema = new Schema(
   }
 );
 
-export const SessionModel: Model<ISession.Doc> = model(
+export const SessionModel: Model<interfaceSession.ISession> = model(
   MODEL_NAME,
   sesionSchema
 );

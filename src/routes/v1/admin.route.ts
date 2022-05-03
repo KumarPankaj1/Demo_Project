@@ -1,6 +1,6 @@
 import express from 'express';
-import {imageUpload,videoUpload} from '../../middleware/multer.middleware';
-import {User} from '../../controller/v1/user.controller';
+import {imageUpload} from '../../middleware/multer.middleware';
+import {Admin} from '../../controller/v1/admin.controller';
 import {validators} from '../../middleware/validator.middleware';
 import {auth} from '../../middleware/user.middleware';
 import swaggerjsDoc from 'swagger-jsdoc';
@@ -42,18 +42,16 @@ const options = {
 const openapiSpecification = swaggerjsDoc(options);
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
-router.route('/generateOtp').post(User.userGenerateOtp);
-router.route('/user/Login').post(validators.loginValidator,User.userLogin);
-router.route('/user/profileCreate').put(auth,validators.ProfileCreateValidator,User.userProfileCreate);
-router.route('/user/profilePicUpload').put(imageUpload.single('profile_pic'),auth,User.profilePicUpload);
-router.route('/userWorkexperienceDeatilsCreated').post(auth,User.workExperienceDetails);
-router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.userVideoUpload);
+router.route('/admin/generateOtp').post(Admin.adminGenerateOtp);
+router.route('/admin/Login').post(validators.loginValidator,Admin.adminLogin);
+router.route('/admin/profileCreate').put(validators.ProfileCreateValidator,auth,Admin.adminProfileCreate);
+router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),auth,Admin.profilePicUpload);
 
 /**
  * @swagger
  * tags:
- *   - name: OnboardingApi's For User
- *     description: Routes to login or create complete profile for a new user.
+ *   - name: OnboardingApi's For Admin
+ *     description: Routes to login or create complete profile for a admin.
  */
 
 /**
@@ -91,7 +89,7 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  *          profileCreate:
  *              type: object
  *              properties:
- *                  username:
+ *                  adminName:
  *                     type: String
  *                     example: pankaj
  *                  dateOfBirth:
@@ -121,7 +119,7 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  *                  districtOfPermanenttLocationLongitude:
  *                      type: Number
  *                      example: 14.37
- *                  userType:
+ *                  adminType:
  *                      type: Number
  *                      example: "1"
  */
@@ -143,10 +141,10 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
 
 /**
  * @swagger
- * /generateOtp:
+ * admin/generateOtp:
  *        post:
  *           summary: used to generate otp from phonenumber
- *           tags: [OnboardingApi's For User]
+ *           tags: [OnboardingApi's For Admin]
  *           description: This api is used for otp generation
  *           requestBody:
  *               required: true
@@ -163,11 +161,11 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
 
 /**
  * @swagger
- * /user/Login:
+ * /admin/Login:
  *        post:
- *           summary: used to login user
- *           tags: [OnboardingApi's For User]
- *           description: This api is used for login
+ *           summary: used to login admin
+ *           tags: [OnboardingApi's For Admin]
+ *           description: This api is used for admin
  *           requestBody:
  *               required: true
  *               content:
@@ -182,11 +180,11 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
 
 /**
  * @swagger
- * /user/profileCreate:
+ * /admin/profileCreate:
  *        put:
- *           summary: used to verify otp and for creation user account
- *           tags: [OnboardingApi's For User]
- *           description: This api is used for user account creation
+ *           summary: used to verify otp and for creation admin account
+ *           tags: [OnboardingApi's For Admin]
+ *           description: This api is used for admin account creation
  *           requestBody:
  *               required: true
  *               content:
@@ -195,7 +193,7 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  *                            $ref: '#components/schemas/profileCreate'               
  *           responses:
  *                200:
- *                  description: user profile created successfully
+ *                  description: admin profile created successfully
  */
 
 /**
@@ -203,8 +201,8 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  * /user/profilePicUpload:
  *        put:
  *           summary: used to image upload
- *           tags: [OnboardingApi's For User]
- *           description: This api is used for user image upload
+ *           tags: [OnboardingApi's For Admin]
+ *           description: This api is used for admin image upload
  *           requestBody:
  *               required: true
  *               content:
@@ -213,7 +211,7 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  *                            $ref: '#components/schemas/profilePicUpload'               
  *           responses:
  *                200:
- *                  description: user image upload successfully
+ *                  description: admin image upload successfully
  */
 
 

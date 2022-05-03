@@ -1,10 +1,11 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { DBENUMS, STATUS_MSG } from "../../constant/app.constant";
 import { twilioService } from "../../services/twilio.service";
 import { userEntity } from "../../entity/v1/user.entity";
 import { sendErrorResponse } from "./../../utils/errorhandler";
 import { sendResponse, SendErrorResponse } from "./../../utils/response";
-import { tokenUtil } from "../../utils/jwt.utils";
+import { IUser, IWorkExperience } from "../../interfaces/models.interface";
+import { sessionService } from "../../services/session.service";
 
 class userClass {
   // UserType = DBENUMS.USERTYPE.USER;
@@ -28,27 +29,28 @@ class userClass {
     try {
       let response: any = await twilioService.verifyOtp(req.body);
       if (response.status == "approved") {
-        let token = req.body.token;
-        let user: any = await userEntity.userExists(req.body);
+        let user: IUser | null = await userEntity.userExists(req.body);
         if (user) {
-          if (token === undefined) {
-            const token = tokenUtil.generateAuthToken({
-              _id: user._id,
-            });
-            sendResponse(
-              res,
-              STATUS_MSG.SUCCESS.USER_LOGGED_IN_SUCCESFULLY({ token: token })
-            );
-          } else {
-            sendResponse(res, STATUS_MSG.ERROR.ALREADY_LOGGEDIN("user"));
-          }
+          const token = await sessionService.create(user._id, {
+            deviceId: "0",
+            deviceToken: "0",
+            userType: DBENUMS.USERTYPE.USER,
+          });
+          sendResponse(
+            res,
+            STATUS_MSG.SUCCESS.USER_LOGGED_IN({ token: token })
+          );
         } else {
-          let user = await userEntity.userInsert(req.body);
-          const token = tokenUtil.generateAuthToken({
-            _id: user._id,
+          const user = await userEntity.userInsert(req.body);
+          const token = await sessionService.create(user._id, {
+            deviceId: "0",
+            deviceToken: "0",
+            userType: DBENUMS.USERTYPE.USER,
           });
           sendResponse(res, STATUS_MSG.SUCCESS.CREATED({ token: token }));
         }
+      } else {
+        SendErrorResponse(res, STATUS_MSG.ERROR.INVALID_CREDENTIALS);
       }
     } catch (err: any) {
       const errData: any = sendErrorResponse(err);
@@ -58,7 +60,7 @@ class userClass {
 
   async userProfileCreate(req: Request, res: Response): Promise<void> {
     try {
-      let user: any = await userEntity.profileCreate(req.body);
+      let user: IUser | null = await userEntity.profileCreate(req.body);
       if (user) {
         sendResponse(res, STATUS_MSG.SUCCESS.USER_CREATED);
       } else {
@@ -66,46 +68,60 @@ class userClass {
       }
     } catch (err) {
       console.log(err);
-      res.status(404).json({ message: err });
+      SendErrorResponse(res, err);
     }
   }
 
   async profilePicUpload(req: Request, res: Response): Promise<void> {
     try {
-      let user: any = await userEntity.userImageUpload(req.body._id, req.file);
-
+      let user: IUser | null = await userEntity.userImageUpload(
+        req.body._id,
+        req.file
+      );
       if (user) {
         sendResponse(res, STATUS_MSG.SUCCESS.USER_IMAGE_UPLOADED);
       }
     } catch (err) {
       console.log(err);
-      res.status(404).json({ message: err });
+      SendErrorResponse(res, err);
+    }
+  }
+
+  async workExperienceDetails(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      let details: IWorkExperience | null =
+        await userEntity.createUserExperienceDetails(req.body);
+      if (details) {
+        sendResponse(
+          res,
+          STATUS_MSG.SUCCESS.USER_WORKEXPERIENCEDEATILS_CREATED
+        );
+      } else {
+        SendErrorResponse(res, STATUS_MSG.ERROR.INCORECT_INFORMATION);
+      }
+    } catch (err) {
+      SendErrorResponse(res, STATUS_MSG.ERROR.INCORECT_INFORMATION);
+    }
+  }
+
+  async userVideoUpload(req: Request, res: Response): Promise<void> {
+    try {
+      let updatedData: IWorkExperience | null =
+        await userEntity.userVideoUpload(req.body._id, req.file);
+      if (updatedData) {
+        sendResponse(res, STATUS_MSG.SUCCESS.USER_VIDEO_UPLOADED);
+      } else {
+        sendResponse(res, STATUS_MSG.ERROR.INCORECT_INFORMATION);
+      }
+    } catch (err) {
+      console.log(err);
+      SendErrorResponse(res, err);
     }
   }
 }
 
 export const User = new userClass();
-
-// async userSignup(req: Request, res: Response): Promise<void> {
-//   try {
-//     let response: any = await twilioService.verifyOtp(req.body);
-//     if (response.status == "approved") {
-//       let user: any = await userEntity.userExists(req.body);
-//       if (user) {
-//         sendResponse(res, STATUS_MSG.ERROR.ALREADY_EXIST("Already"));
-//       } else {
-//         let user = await userEntity.userInsert(req.body);
-//         const token = tokenUtil.generateAuthToken({
-//           _id: user._id,
-//           UserType: DBENUMS.USERTYPE.USER,
-//         });
-//         sendResponse(res, STATUS_MSG.SUCCESS.CREATED({ token: token }));
-//       }
-//     } else {
-//       sendResponse(res, STATUS_MSG.ERROR.INVALID_CREDENTIALS);
-//     }
-//   } catch (err: any) {
-//     const errData: any = sendErrorResponse(err);
-//     SendErrorResponse(res, errData);
-//   }
-// }

@@ -1,15 +1,18 @@
 import UserModel from "../../models/user.model";
-import { DBENUMS, STATUS_MSG } from "../../constant/app.constant";
+import userExperienceModel from "../../models/workexperience.model";
+import {STATUS_MSG } from "../../constant/app.constant";
+import {IUser,IWorkExperience} from "../../interfaces/models.interface";
+import {Types} from 'mongoose';
 
 class userEntityClass {
   get Model() {
     return UserModel;
   }
-
-  async userExists(payLoad: any) {
+ 
+  async userExists(payLoad:IUser): Promise<IUser|null>{
     try {
-      const phoneNumber = payLoad.phoneNumber;
-      const user = await this.Model.findOne({ phoneNumber });
+      const phoneNumber:number = payLoad.phoneNumber;
+      const user: IUser | null = await this.Model.findOne({ phoneNumber });
       return user;
     } catch (err) {
       console.log(err);
@@ -17,12 +20,12 @@ class userEntityClass {
     }
   }
 
-  async userInsert(data: any) {
+  async userInsert(data: IUser): Promise<IUser>{
     try {
       let Data = new this.Model({
-        phoneNumber: data.phoneNumber
+        phoneNumber: data.phoneNumber,
       });
-      let user: any = await Data.save();
+      let user: IUser = await Data.save();
       return user;
     } catch (err) {
       console.log(err);
@@ -30,27 +33,33 @@ class userEntityClass {
     }
   }
 
-  async profileCreate(data: any) {
+  async profileCreate(data: any): Promise<IUser|null>{
     try {
-      const user = await this.Model.findByIdAndUpdate(
+      const user:IUser | null= await this.Model.findByIdAndUpdate(
         data._id,
         {
-        username: data.username,
-        dateOfBirth: data.dateOfBirth,
-        gender: data.gender,
-        location: {
-          type: "Point",
-          coordinates: [data.locationLattitude,data.locationLongitude],
-        },
-        districtOfCurrentLocation: {
-          type: "Point",
-          coordinates: [data.districtOfCurrentLocationLattitude, data.districtOfCurrentLocationLongitude],
-        },
-        districtOfPermanentLocation: {
-          type: "Point",
-          coordinates: [data.districtOfPermanentLocationLattitude, data.districtOfPermanenttLocationLongitude],
-        },
-        userType:data.userType,
+          username: data.username,
+          dateOfBirth: data.dateOfBirth,
+          gender: data.gender,
+          location: {
+            type: "Point",
+            coordinates: [data.locationLattitude, data.locationLongitude],
+          },
+          districtOfCurrentLocation: {
+            type: "Point",
+            coordinates: [
+              data.districtOfCurrentLocationLattitude,
+              data.districtOfCurrentLocationLongitude,
+            ],
+          },
+          districtOfPermanentLocation: {
+            type: "Point",
+            coordinates: [
+              data.districtOfPermanentLocationLattitude,
+              data.districtOfPermanenttLocationLongitude,
+            ],
+          },
+          userType: data.userType,
         },
         {
           new: true,
@@ -63,11 +72,9 @@ class userEntityClass {
     }
   }
 
-  async userImageUpload(id: any, file: any) {
+  async userImageUpload(id: any, file: any): Promise<IUser|null>{
     try {
-      console.log(id);
-      
-      const user = await this.Model.findByIdAndUpdate(
+      const user: IUser| null = await this.Model.findByIdAndUpdate(
         id,
         {
           profileUrl: `http://localhost:${process.env.PORT}/${file?.filename}`,
@@ -77,7 +84,46 @@ class userEntityClass {
         }
       );
       console.log(user);
-      
+
+      return user;
+    } catch (err) {
+      return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
+    }
+  }
+
+  async createUserExperienceDetails(data: any): Promise<IWorkExperience|null>{
+    try {
+      let Data = new userExperienceModel({
+        education: data.education,
+        isPreviousWorkExperience: data.isPreviousWorkExperience,
+        typeOfPreviousWorkExperience: data.typeOfPreviousWorkExperience,
+        previousSalary: data.previousSalary,
+        jobCategory: data.jobCategory,
+        expectedSalary: data.expectedSalary,
+        preferredLocation: data.preferredLocation,
+        workLookingFor: data.workLookingFor,
+        userId: data._id,
+      });
+      let user:IWorkExperience | null= await Data.save();
+      return user;
+    } catch (err) {
+      console.log(err);
+      return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
+    }
+  }
+
+  async userVideoUpload(id: any, file: any): Promise<IWorkExperience|null>{
+    try {
+      const userId:Types.ObjectId = id;
+      const user: IWorkExperience | null= await userExperienceModel.findOneAndUpdate(
+        userId,
+        {
+          videoUrl: `http://localhost:${process.env.PORT}/${file?.filename}`,
+        },
+        {
+          new: true,
+        }
+      );
       return user;
     } catch (err) {
       return Promise.reject(err);
@@ -87,132 +133,4 @@ class userEntityClass {
 
 export const userEntity = new userEntityClass();
 
-// static async userExists(payLoad: any): Promise<boolean>{
-//   try{
-//       if(payLoad._id){
-//           payLoad._id = new Types.ObjectId(payLoad._id);
-//       }
-//       const userExists = await this.getModel().findOne(payLoad);
-//       if(userExists){
-//           return true;
-//       }else{
-//           return false
-//       }
-//   }catch(err){
-//       logger.error(err);
-//       return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
-//   }
-// }
 
-// async userSignup(data: any) {
-//   try {
-//     const userExist = await User.findOne({
-//       phoneNumber: data.PhoneNumber,
-//     });
-//     if (userExist) {
-//       return Promise.reject(STATUS_MSG.ERROR.ALREADY_EXIST("Already"));
-//     }
-//     let Data = new User({
-//       phoneNumber: data.PhoneNumber,
-//       userType: data.UserType,
-//     });
-//     let user: any = await Data.save();
-//     let token = jwt.sign({ _id: user._id }, <string>process.env.SECRET_KEY);
-//     const statusData = STATUS_MSG.SUCCESS.CREATED({ token: token });
-//     return Promise.resolve(statusData);
-//   } catch (err) {
-//     return Promise.reject(STATUS_MSG.ERROR.INCORECT_INFORMATION);
-//   }
-// // }
-
-// async userLogin(data: any, token: any) {
-//   try {
-//     const user = await User.findOne({ PhoneNumber: data.PhoneNumber });
-//     if (user) {
-//       if (token === undefined) {
-//         let newtoken = jwt.sign(
-//           { _id: user._id },
-//           <string>process.env.SECRET_KEY
-//         );
-//         return Promise.resolve(STATUS_MSG.SUCCESS.USER_LOGGED_IN_SUCCESFULLY({newtoken:newtoken}));
-//       } else {
-//         return Promise.reject(STATUS_MSG.ERROR.ALREADY_LOGGEDIN("user"));
-//       }
-//     } else {
-//       return Promise.reject(STATUS_MSG.ERROR.NOT_EXIST("user"));
-//     }
-//   } catch (err) {
-//     return Promise.reject(err);
-//   }
-// }
-// }
-
-// {
-//   username: 'Pankaj',
-//   dateOfBirth: '01/02/2000',
-//   emailAddress: 'kumarpankaj22881@gmail.com',
-//   gender: '1',
-//   location: { coordinates: [ 12.27, 12.37 ] },
-//   districtOfCurrentLocation: { coordinates: [ 13.27, 13.37 ] },
-//   districtOfPermanentLocation: { coordinates: [ 14.27, 14.37 ] },
-//   _id: '626234d13bcd360e33d24ac4'
-// }
-
-// async userProfileCreate(id: any, data: any) {
-//   console.log(id);
-
-//   try {
-//     const user = await User.findByIdAndUpdate(
-//       id,
-//       {
-//         username: data.Username,
-//         dateOfBirth: data.DateOfBirth,
-//         gender: data.Gender,
-//         location: {
-//           type: "Point",
-//           coordinates: [data.latt1, data.long1],
-//         },
-//         districtOfCurrentLocation: {
-//           type: "Point",
-//           coordinates: [data.latt2, data.long2],
-//         },
-//         districtOfPermanentLocation: {
-//           type: "Point",
-//           coordinates: [data.latt3, data.long3],
-//         },
-//       },
-//       {
-//         new: true,
-//       }
-//     );
-//     return Promise.resolve(STATUS_MSG.SUCCESS.USER_CREATED);
-//   } catch (err) {
-//     return Promise.reject(err);
-//   }
-// }
-
-// async userImageUpload(id: any, file: any) {
-//   try {
-//     const user = await User.findByIdAndUpdate(
-//       id,
-//       {
-//         profileUrl: `http://localhost:${process.env.PORT}/${file?.filename}`,
-//       },
-//       {
-//         new: true,
-//       }
-//     );
-//     return Promise.resolve(STATUS_MSG.SUCCESS.USER_IMAGE_UPLOADED);
-//   } catch (err) {
-//     return Promise.reject(err);
-//   }
-// }
-// }
-
-// username : data.username,
-          // dateOfBirth: data.dateOfBirth,
-          // gender : data.gender,
-          // emailAddress: data.emailAddress,
-          // location: data.location,
-          // districtOfCurrentLocation: data.districtOfCurrentLocation,
-          // districtOfPermanentLocation: data.districtOfPermanentLocation,

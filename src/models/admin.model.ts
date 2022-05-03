@@ -2,74 +2,66 @@ import {Schema,model,SchemaTypes} from 'mongoose';
 import { DBENUMS } from '../constant/app.constant';
 import { IAdmin } from '../interfaces/models.interface';
 
-// const ImageSchema = new Schema({
-//     url: String,
-//     filename: String,
-//   });
 
-const adminSchema = new Schema<IAdmin>({
-    Adminname:{
+const userSchema = new Schema<IAdmin>({
+    adminName:{
         type:SchemaTypes.String,
-        required: true
     },
-    ProfileUrl:String,
-    Phone_Number:{
+    profileUrl:{
+      type:SchemaTypes.String
+    },
+    phoneNumber:{
         type:SchemaTypes.Number,
         required: true,
         unique: true
-    },
-    DateOfBirth:{
+     },
+    dateOfBirth:{
         type:SchemaTypes.Date,
-        required: true
     },
-    Gender:{
+    emailAddress:{
+      type:SchemaTypes.String
+    },
+    gender:{
         type:SchemaTypes.String,
         enum:DBENUMS.GENDER,
-        required: true
     },
-    Location: {
+    location: {
+        type: {
+          type: String, 
+          enum: ['Point'],
+        },
+        coordinates: {
+          type: [Number],
+        }
+    },
+    districtOfCurrentLocation: {
         type: {
           type: String, 
           enum: ['Point'], 
         },
         coordinates: {
           type: [Number],
-          required: true
         }
     },
-    CurrentLocation: {
+    districtOfPermanentLocation: {
         type: {
           type: String, 
           enum: ['Point'], 
-          required: true
         },
         coordinates: {
           type: [Number],
-          required: true
         }
     },
-    PermanentLocation: {
-        type: {
-          type: String, 
-          enum: ['Point'], 
-          required: true
-        },
-        coordinates: {
-          type: [Number],
-          required: true
-        }
-    },
-    AdminType:{
+    adminType:{
         type:SchemaTypes.Number,
         enum:DBENUMS.ADMIN,
-        Defalut: 'SUPER_ADMIN'
     },
-  
-},{
-  timestamps: true
-})
+  },{
+    timestamps: true
+  })
 
 
-const Admin = model<IAdmin>('Admin', adminSchema);
+
+const Admin = model<IAdmin>('Admin', userSchema);
 
 export default Admin;

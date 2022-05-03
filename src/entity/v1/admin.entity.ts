@@ -1,69 +1,91 @@
-import express, { Application, NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import { STATUS_MSG } from "../../constant/app.constant";
-import { adminService } from "../../controller/v1/admin.controller";
-const app: Application = express();
-app.use(express.json());
+import AdminModel from "../../models/admin.model";
+import {STATUS_MSG } from "../../constant/app.constant";
+import { IAdmin } from "../../interfaces/models.interface";
 
-class adminClass {
+class adminEntityClass {
+  get Model() {
+    return AdminModel;
+  }
 
-    async adminGenerateOtp(req: Request, res: Response): Promise<void>{
-        try{
-            let admindata:any = await adminService.adminGenerateOtp(req.body)
-             if(admindata=='response') {
-                res.status(200).json({ message: admindata})
-             }   
-            
-        }catch(err){
-           if(err == 'INVALID CREDENTIALS'){
-               res.status(400).json({
-               message: "Wrong phone number :(",
-               phonenumber: req.body.PhoneNumber,
-             });
-           }
-           else{
-           console.log(err);
-           res.status(404).json(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE);
-           }
-        }}
-
-  async adminLogin(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async adminExists(payLoad: IAdmin): Promise<IAdmin | null> {
     try {
-      let data: any = await adminService.adminlogin(req.body, req.file);
-      if ((data = "adminExist")) {
-        res.status(200).json({ message: "admin already exist" });
-      } else {
-        let token = data.token;
-        res.cookie("jwt", token, {
-          expires: new Date(Date.now() + 300000),
-        });
-        let user = data.user;
-        if (user) {
-          res.status(200).json({ message: "login successful" });
+      const phoneNumber: number = payLoad.phoneNumber;
+      const admin: IAdmin | null = await this.Model.findOne({ phoneNumber });
+      return admin;
+    } catch (err) {
+      console.log(err);
+      return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
+    }
+  }
+
+  async userInsert(data: IAdmin): Promise<IAdmin> {
+    try {
+      let Data = new this.Model({
+        phoneNumber: data.phoneNumber,
+      });
+      let admin: IAdmin = await Data.save();
+      return admin;
+    } catch (err) {
+      console.log(err);
+      return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
+    }
+  }
+
+  async profileCreate(data: any): Promise<IAdmin | null> {
+    try {
+      const admin: IAdmin | null = await this.Model.findByIdAndUpdate(
+        data._id,
+        {
+          adminName: data.adminName,
+          dateOfBirth: data.dateOfBirth,
+          gender: data.gender,
+          location: {
+            type: "Point",
+            coordinates: [data.locationLattitude, data.locationLongitude],
+          },
+          districtOfCurrentLocation: {
+            type: "Point",
+            coordinates: [
+              data.districtOfCurrentLocationLattitude,
+              data.districtOfCurrentLocationLongitude,
+            ],
+          },
+          districtOfPermanentLocation: {
+            type: "Point",
+            coordinates: [
+              data.districtOfPermanentLocationLattitude,
+              data.districtOfPermanenttLocationLongitude,
+            ],
+          },
+          adminType: data.adminType,
+        },
+        {
+          new: true,
         }
-      }
-    } catch (err: any) {
-      if (err == "invalid credentials") {
-        res.status(400).send({
-          message: "Wrong phone number or code :(",
-          phonenumber: req.body.phonenumber,
-        });
-      } else {
-        if (err == err.a) {
-          console.log(err);
-          res.status(404).json(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE);
+      );
+      return admin;
+    } catch (err) {
+      console.log(err);
+      return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
+    }
+  }
+
+  async adminImageUpload(id: any, file: any): Promise<IAdmin | null> {
+    try {
+      const admin: IAdmin | null = await this.Model.findByIdAndUpdate(
+        id,
+        {
+          profileUrl: `http://localhost:${process.env.PORT}/${file?.filename}`,
+        },
+        {
+          new: true,
         }
-        if (err == err.b) {
-          console.log(err);
-          res.status(400).json(STATUS_MSG.ERROR.DEFAULT_ERROR_MESSAGE);
-        }
-      }
+      );
+      return admin;
+    } catch (err) {
+      return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
     }
   }
 }
 
-export const Admin = new adminClass();
+export const adminEntity = new adminEntityClass();

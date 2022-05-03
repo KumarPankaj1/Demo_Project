@@ -1,6 +1,7 @@
-import { Document, Types } from "mongoose";
+import { Document, Schema } from "mongoose";
 
 export interface IUser {
+    _id: Schema.Types.ObjectId
     username: string,
     profileUrl:string,
     phoneNumber: number,
@@ -13,41 +14,44 @@ export interface IUser {
     districtOfPermanentLocation: Object
 }
 
+
 export interface IAdmin {
-    Adminname: String,
-    ProfileUrl:String,
-    Phone_Number: Number,
-    DateOfBirth: Date,
-    Gender: String,
-    AdminType: Number,
-    Location: Object,
-    CurrentLocation: Object,
-    PermanentLocation: Object,
+  _id: Schema.Types.ObjectId
+  adminName: string,
+  profileUrl: string,
+  phoneNumber: number,
+  dateOfBirth: Date,
+  emailAddress: string,
+  gender: string,
+  adminType: number,
+  location: Object,
+  districtOfCurrentLocation: Object,
+  districtOfPermanentLocation: Object
 }
 
-export interface IExperience {
-    Education: String,
-    IsPreviousExperience: Boolean,
-    PreviousExperience: String,
-    PreviousSalary: String,
-    PreferredLocation: String,
-    SuitableWork: String
-    video: String,
-    createdAt: Date,
-    updatedAt: Date
+export interface IWorkExperience {
+    education: string,
+    isPreviousWorkExperience: boolean,
+    typeOfPreviousWorkExperience: string,
+    previousSalary: string[],
+    preferredLocation: Object,
+    jobCategory: string
+    expectedSalary: string
+    workLookingFor: string
+    videoUrl: string,
+    userId: Schema.Types.ObjectId
 }
 
 export interface IJob {
-    job_name: String,
-    salary: String,
-    opening:Number
-    company_name: String
-    Location: Object,
-    requirements: String,
-    education: String,
-    workingdays: String,
-    createdAt: Date,
-    updatedAt: Date
+    jobname: string,
+    salary: number,
+    opening:number
+    companyName: string
+    location: Object,
+    jobAddedDays: number
+    requirements: string,
+    educationAndTiming: object,
+    personOfContact: object
 }
 
 export interface IResult {
@@ -60,19 +64,3 @@ export interface IResult {
 }
 
 
-
-export namespace ISession {
-  export interface CreateData {
-    deviceId: string;
-    deviceToken?: string;
-  }
-  export interface Doc extends Document, CreateData {
-    userId: Types.ObjectId;
-    isActive: boolean;
-  }
-  export enum LogoutTarget {
-    Single = "single",
-    Device = "device",
-    All = "all",
-  }
-}

@@ -1,102 +1,89 @@
-import express, { Application, Request, Response } from "express";
-import Admin from "../../models/admin.model";
-require('dotenv').config();
-import jwt from 'jsonwebtoken';
-import { STATUS_MSG } from "../../constant/app.constant";
-const app: Application = express();
-app.use(express.json());
+import { Request, Response, NextFunction } from "express";
+import { DBENUMS, STATUS_MSG } from "../../constant/app.constant";
+import { twilioService } from "../../services/twilio.service";
+import { adminEntity } from "../../entity/v1/admin.entity";
+import { sendErrorResponse } from "./../../utils/errorhandler";
+import { sendResponse, SendErrorResponse } from "./../../utils/response";
+import { IAdmin} from "../../interfaces/models.interface";
+import { sessionService } from "../../services/session.service";
 
-const client = require("twilio")(
-    process.env.ACCOUNT_SID,
-    process.env.AUTH_TOKEN
-  );
-
-class adminServiceClass{
-   async adminGenerateOtp(data:any){
+class adminClass {
+  // UserType = DBENUMS.USERTYPE.USER;
+  async adminGenerateOtp(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
-      // console.log(req.body);
-      if (data.PhoneNumber) {
-        const response= await client.verify
-          .services(process.env.SERVICE_ID)
-          .verifications.create({
-            to: `+${data.PhoneNumber}`,
-            // channel: req.body.channel,
-            channel: "sms"
-          })
-          return Promise.resolve(response)
-           
-      } else {
-        return Promise.reject("INVALID CREDENTIALS")
-      }
-    } catch (err) {
-      return Promise.reject(err);
-    }
-  };
-
-  async adminlogin(data:any , file:any){ 
-    try {
-      if (data.PhoneNumber && data.code.length === 6) {
-        const response = await client.verify
-          .services(process.env.SERVICE_ID)
-          .verificationChecks.create({
-            to: `+${data.PhoneNumber}`,
-            code: data.code,
-          });
-
-        if (response.status === "approved") {
-          // console.log("pankaj");
-
-          try {
-            // console.log(req.file);
-            const adminExist = await Admin.findOne({
-              PhoneNumber: data.PhoneNumber,
-            });
-            if (adminExist) {
-              return Promise.resolve(adminExist);
-            } else {
-              const doc = new Admin({
-                Adminname: data.Adminname,
-                ProfileUrl: `http://localhost:${process.env.PORT}/${file?.filename}`,
-                PhoneNumber: data.PhoneNumber,
-                DateOfBirth: data.DateOfBirth,
-                Gender: data.Gender,
-                Location: {
-                  type: "Point",
-                  coordinates: [data.latt1, data.long1],
-                },
-                DistrictOfCurrentLocation: {
-                  type: "Point",
-                  coordinates: [data.latt2, data.long2],
-                },
-                DistrictOfPermanentLocation: {
-                  type: "Point",
-                  coordinates: [data.latt3, data.long3],
-                },
-                AdminType: data.AdminType,
-              });
-
-              const user = await doc.save();
-              let token = jwt.sign({ _id: user._id }, "Pankaj Parmar");
-              return Promise.resolve({
-                user,
-                token,
-              });
-            }
-          } catch (err) {
-            return Promise.reject({ a: err });
-          }// dotenv.config({ path: "../../.env" });
-        } else {
-          return Promise.reject("invalid credentials");
-        }
+      let response: any = await twilioService.generateOtp(req.body);
+      if (response) {
+        sendResponse(res, STATUS_MSG.SUCCESS.OTP_GENERATE_SUCCESFULLY);
       }
     } catch (err: any) {
-      return Promise.reject({ b: err });
+      console.log(err);
+      SendErrorResponse(res, err);
     }
   }
+
+  async adminLogin(req: Request, res: Response): Promise<void> {
+    try {
+      let response: any = await twilioService.verifyOtp(req.body);
+      if (response.status == "approved") {
+        let admin: IAdmin | null = await adminEntity.adminExists(req.body);
+        if (admin) {
+          const token = await sessionService.create(admin._id, {
+            deviceId: "0",
+            deviceToken: "0",
+            userType: DBENUMS.USERTYPE.USER,
+          });
+          sendResponse(
+            res,
+            STATUS_MSG.SUCCESS.USER_LOGGED_IN({ token: token })
+          );
+        }
+      } else {
+        const admin = await adminEntity.userInsert(req.body);
+        const token = await sessionService.create(admin._id, {
+          deviceId: "0",
+          deviceToken: "0",
+          userType: DBENUMS.USERTYPE.USER,
+        });
+        sendResponse(res, STATUS_MSG.SUCCESS.CREATED({ token: token }));
+      }
+    } catch (err: any) {
+      const errData: any = sendErrorResponse(err);
+      SendErrorResponse(res, errData);
+    }
   }
-                            
 
-              
+  async adminProfileCreate(req: Request, res: Response): Promise<void> {
+    try {
+      let admin: IAdmin | null = await adminEntity.profileCreate(req.body);
+      if (admin) {
+        sendResponse(res, STATUS_MSG.SUCCESS.USER_CREATED);
+      } else {
+        SendErrorResponse(res, STATUS_MSG.ERROR.INCORECT_INFORMATION);
+      }
+    } catch (err) {
+      console.log(err);
+      SendErrorResponse(res, err);
+    }
+  }
 
-export const adminService = new adminServiceClass();
+  async profilePicUpload(req: Request, res: Response): Promise<void> {
+    try {
+      let admin: IAdmin | null = await adminEntity.adminImageUpload(
+        req.body._id,
+        req.file
+      );
+      if (admin) {
+        sendResponse(res, STATUS_MSG.SUCCESS.USER_IMAGE_UPLOADED);
+      }
+    } catch (err) {
+      console.log(err);
+      SendErrorResponse(res, err);
+    }
+  }  
+}
 
+export const Admin = new adminClass();
