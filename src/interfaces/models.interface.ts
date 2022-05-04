@@ -30,23 +30,24 @@ export interface IAdmin {
 }
 
 export interface IWorkExperience {
-    education: string,
+    education: number,
     isPreviousWorkExperience: boolean,
-    typeOfPreviousWorkExperience: string,
-    previousSalary: string[],
-    preferredLocation: Object,
-    jobCategory: string
-    expectedSalary: string
-    workLookingFor: string
+    typeOfPreviousWorkExperience: number,
+    previousSalary: number[],
+    preferredLocation: number,
+    jobCategory: number
+    expectedSalary: number
+    workLookingFor: number
     videoUrl: string,
     userId: Schema.Types.ObjectId
 }
 
 export interface IJob {
-    jobname: string,
+    jobName: string,
     salary: number,
     opening:number
     companyName: string
+    companyNameUrl: string
     location: Object,
     jobAddedDays: number
     requirements: string,

@@ -30,6 +30,19 @@ class userValidatorClass {
       res.status(400).json({ error: err.message });
     }
   };
+
+  userWorkExperienceDetails = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+  try {
+    await userValidator.WorkExperienceDetails.validateAsync(req.body);
+    next();
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+};
 }
 
 export const userValidators = new userValidatorClass();

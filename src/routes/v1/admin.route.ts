@@ -17,7 +17,7 @@ const options = {
       },
       servers:[
           {
-             url: 'http://localhost:4000'
+             url: `http://localhost:${process.env.PORT}`,
           }
       ],
       components: {
@@ -78,8 +78,9 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  *                      type: Number
  *                      example: 916397471669
  *                  code:
- *                    type: Number
+ *                    type: String
  *                    example: 1234
+ *                    sescription: code must be in string
  */
 
 /**
@@ -121,7 +122,8 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  *                      example: 14.37
  *                  adminType:
  *                      type: Number
- *                      example: "1"
+ *                      example: 1
+ *                      description:  SUPER_ADMIN-1,SUB_ADMIN-2
  */
 
 

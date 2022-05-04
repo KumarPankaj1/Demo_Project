@@ -1,17 +1,17 @@
 import UserModel from "../../models/user.model";
 import userExperienceModel from "../../models/workexperience.model";
-import {STATUS_MSG } from "../../constant/app.constant";
-import {IUser,IWorkExperience} from "../../interfaces/models.interface";
-import {Types} from 'mongoose';
+import { STATUS_MSG } from "../../constant/app.constant";
+import { IUser, IWorkExperience } from "../../interfaces/models.interface";
+import { Types } from "mongoose";
 
 class userEntityClass {
   get Model() {
     return UserModel;
   }
- 
-  async userExists(payLoad:IUser): Promise<IUser|null>{
+
+  async userExists(payLoad: IUser): Promise<IUser | null> {
     try {
-      const phoneNumber:number = payLoad.phoneNumber;
+      const phoneNumber: number = payLoad.phoneNumber;
       const user: IUser | null = await this.Model.findOne({ phoneNumber });
       return user;
     } catch (err) {
@@ -20,7 +20,7 @@ class userEntityClass {
     }
   }
 
-  async userInsert(data: IUser): Promise<IUser>{
+  async userInsert(data: IUser): Promise<IUser> {
     try {
       let Data = new this.Model({
         phoneNumber: data.phoneNumber,
@@ -33,9 +33,9 @@ class userEntityClass {
     }
   }
 
-  async profileCreate(data: any,tokenData: any) : Promise<IUser|null>{
+  async profileCreate(data: any, tokenData: any): Promise<IUser | null> {
     try {
-      const user:IUser | null= await this.Model.findByIdAndUpdate(
+      const user: IUser | null = await this.Model.findByIdAndUpdate(
         tokenData.userId,
         {
           username: data.username,
@@ -72,9 +72,9 @@ class userEntityClass {
     }
   }
 
-  async userImageUpload(tokenData: any, file: any): Promise<IUser|null>{
+  async userImageUpload(tokenData: any, file: any): Promise<IUser | null> {
     try {
-      const user: IUser| null = await this.Model.findByIdAndUpdate(
+      const user: IUser | null = await this.Model.findByIdAndUpdate(
         tokenData.userId,
         {
           profileUrl: `http://localhost:${process.env.PORT}/${file?.filename}`,
@@ -89,20 +89,14 @@ class userEntityClass {
     }
   }
 
-  async createUserExperienceDetails(data: any): Promise<IWorkExperience|null>{
+  async createUserExperienceDetails(
+    data:IWorkExperience,
+    tokenData: any
+  ): Promise<IWorkExperience | null> {
     try {
-      let Data = new userExperienceModel({
-        education: data.education,
-        isPreviousWorkExperience: data.isPreviousWorkExperience,
-        typeOfPreviousWorkExperience: data.typeOfPreviousWorkExperience,
-        previousSalary: data.previousSalary,
-        jobCategory: data.jobCategory,
-        expectedSalary: data.expectedSalary,
-        preferredLocation: data.preferredLocation,
-        workLookingFor: data.workLookingFor,
-        userId: data._id,
-      });
-      let user:IWorkExperience | null= await Data.save();
+      data.userId = tokenData.userId;
+      let Data = new userExperienceModel(data);
+      let user: IWorkExperience | null = await Data.save();
       return user;
     } catch (err) {
       console.log(err);
@@ -110,25 +104,25 @@ class userEntityClass {
     }
   }
 
-  async userVideoUpload(id: any, file: any): Promise<IWorkExperience|null>{
+  async userVideoUpload(tokenData: any, file: any): Promise<IWorkExperience | null> {
     try {
-      const userId:Types.ObjectId = id;
-      const user: IWorkExperience | null= await userExperienceModel.findOneAndUpdate(
-        userId,
-        {
-          videoUrl: `http://localhost:${process.env.PORT}/${file?.filename}`,
-        },
-        {
-          new: true,
-        }
-      );
+      const userId: Types.ObjectId = tokenData.userId;
+      const user: IWorkExperience | null =
+        await userExperienceModel.findOneAndUpdate(
+          userId,
+          {
+            videoUrl: `http://localhost:${process.env.PORT}/${file?.filename}`,
+          },
+          {
+            new: true,
+          }
+        );
       return user;
     } catch (err) {
-      return Promise.reject(err);
+      console.log(err);
+      return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
     }
   }
 }
 
 export const userEntity = new userEntityClass();
-
-

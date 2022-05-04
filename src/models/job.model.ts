@@ -4,7 +4,7 @@ import { IJob } from "../interfaces/models.interface";
 
 const jobSchema = new Schema<IJob>(
   {
-    jobname: {
+    jobName: {
       type: SchemaTypes.String,
       trim: true,
       required: true,
@@ -18,6 +18,9 @@ const jobSchema = new Schema<IJob>(
     companyName: {
       type: SchemaTypes.String,
       required: true,
+    },
+    companyNameUrl:{
+      type: SchemaTypes.String,
     },
     location: {
       type: {

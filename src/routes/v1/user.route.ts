@@ -17,7 +17,7 @@ const options = {
       },
       servers:[
           {
-             url: 'http://localhost:4000'
+             url: `http://localhost:${process.env.port}`
           }
       ],
       components: {
@@ -42,12 +42,12 @@ const options = {
 const openapiSpecification = swaggerjsDoc(options);
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
-router.route('user/generateOtp').post(User.userGenerateOtp);
+router.route('/user/generateOtp').post(User.userGenerateOtp);
 router.route('/user/Login').post(userValidators.loginValidator,User.userLogin);
 router.route('/user/profileCreate').put(userValidators.ProfileCreateValidator,auth,User.userProfileCreate);
 router.route('/user/profilePicUpload').put(imageUpload.single('profile_pic'),auth,User.profilePicUpload);
-router.route('/userWorkexperienceDeatilsCreated').post(auth,User.userWorkExperienceDetails);
-router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.userVideoUpload);
+router.route('/user/createWorkExperienceDetails').post(userValidators.userWorkExperienceDetails,auth,User.userWorkExperienceDetails);
+router.route('/user/experienceVideoUpload').put(auth,videoUpload.single('video'),User.userExperienceVideoUpload);
 
 /**
  * @swagger
@@ -80,8 +80,9 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  *                      type: Number
  *                      example: 916397471669
  *                  code:
- *                    type: Number
- *                    example: 1234
+ *                    type: String
+ *                    example: "1234"
+ *                    description: code must be in string
  */
 
 /**
@@ -123,7 +124,8 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  *                      example: 14.37
  *                  userType:
  *                      type: Number
- *                      example: "1"
+ *                      example: 1
+ *                      description: USER-1,CONTRACTOR-2,OTHER-3,
  */
 
 
@@ -141,9 +143,62 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  */
 
 
+
 /**
  * @swagger
- * /generateOtp:
+ *  components:
+ *      schemas:
+ *          userCreateWorkExperienceDetails:
+ *              type: object
+ *              properties:
+ *                  education:
+ *                      type: Number
+ *                      example: 1
+ *                      description: GRADUATE-1, POSTGRADUATE-2, DIPLOMA-3
+ *                  isPreviousWorkExperience:
+ *                      type: boolean
+ *                      example: true
+ *                  typeOfPreviousWorkExperience:
+ *                      type: Number
+ *                      example: 1
+ *                      description: CONSTRUCTION_LABOR-1,CALL_CENTER_OPERATOR-2,FOOD_DELIVERY-3,OTHER-4
+ *                  previousSalary:
+ *                      type: [Number]
+ *                      example: [10000]
+ *                  preferredLocation:
+ *                      type: Number
+ *                      example: 1
+ *                      description: NOIDA-1,CHANDIGARH-2,LUCKNOW-3,UTTARAKHAND-4,
+ *                  jobCategory:
+ *                      type: Number
+ *                      example: 3
+ *                      description: CONSTRUCTION_LABOR-1, CALL_CENTER_OPERATOR-2, FOOD_DELIVERY-3, OTHER-4,
+ *                  expectedSalary:
+ *                      type: Number
+ *                      example: 35000
+ *                  workLookingFor:
+ *                      type: Number
+ *                      example: 2
+ *                      description: CONSTRUCTION_LABOR-1,CALL_CENTER_OPERATOR-2,FOOD_DELIVERY-3,OTHER-4,
+ */
+
+
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          userExperienceVideoUpload:
+ *              type: object
+ *              properties:
+ *                  video:
+ *                     type: file   
+ *                     key: video        
+ */
+
+
+/**
+ * @swagger
+ * /user/generateOtp:
  *        post:
  *           summary: used to generate otp from phonenumber
  *           tags: [OnboardingApi's For User]
@@ -214,6 +269,42 @@ router.route('/user/videoUpload').put(videoUpload.single('video'),auth,User.user
  *           responses:
  *                200:
  *                  description: user image upload successfully
+ */
+
+/**
+ * @swagger
+ * /user/createWorkExperienceDetails:
+ *        post:
+ *           summary: used to add user past experience details
+ *           tags: [OnboardingApi's For User]
+ *           description: This api is used for create user experience details
+ *           requestBody:
+ *               required: true
+ *               content:
+ *                   application/json:
+ *                       schema:
+ *                            $ref: '#components/schemas/userCreateWorkExperienceDetails'               
+ *           responses:
+ *                200:
+ *                  description: user experience details created successfully
+ */
+
+/**
+ * @swagger
+ * /user/experienceVideoUpload:
+ *        put:
+ *           summary: used to upload experience video
+ *           tags: [OnboardingApi's For User]
+ *           description: This api is used for user experience video upload
+ *           requestBody:
+ *               required: true
+ *               content:
+ *                   multipart/form-data:
+ *                       schema:
+ *                            $ref: '#components/schemas/userExperienceVideoUpload'               
+ *           responses:
+ *                200:
+ *                  description: user experience upload successfully
  */
 
 

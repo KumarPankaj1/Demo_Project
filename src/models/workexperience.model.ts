@@ -4,7 +4,7 @@ import { IWorkExperience } from '../interfaces/models.interface';
 
 const experienceSchema = new Schema<IWorkExperience>({
     education:{
-        type:SchemaTypes.String,
+        type:SchemaTypes.Number,
         enum:DBENUMS.EDUCATION,
         required: true
     },
@@ -13,25 +13,25 @@ const experienceSchema = new Schema<IWorkExperience>({
         required: true
     },
     typeOfPreviousWorkExperience:{
-        type:SchemaTypes.String,
+        type:SchemaTypes.Number,
         enum:DBENUMS.WORKEXPERINCE
     },
     previousSalary:{
-        type:[String],
+        type:[Number],
     },
     preferredLocation: {
-        type:SchemaTypes.String,
+        type:SchemaTypes.Number,
         enum:DBENUMS.LOCATION
     },
     jobCategory:{
-        type:SchemaTypes.String,
+        type:SchemaTypes.Number,
         enum:DBENUMS.JOBCATEGORY,
     },
     expectedSalary:{
-        type:SchemaTypes.String,
+        type:SchemaTypes.Number,
     },
     workLookingFor:{
-        type:SchemaTypes.String,
+        type:SchemaTypes.Number,
         enum:DBENUMS.WORKLOOKINGFOR,
     },
     videoUrl:{

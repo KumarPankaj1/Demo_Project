@@ -16,15 +16,27 @@ class userValidatorClass {
     username: Joi.string().trim().min(3).max(15).lowercase().required(),
     dateOfBirth: Joi.date(),
     emailAddress: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
-    gender:Joi.number(),
+    gender:Joi.number().valid(1,2,3),
     locationLattitude:Joi.number(),
     locationLongitude:Joi.number(),
     districtOfCurrentLocationLattitude:Joi.number(),
     districtOfCurrentLocationLongitude:Joi.number(),
     districtOfPermanentLocationLattitude:Joi.number(),
     districtOfPermanenttLocationLongitude:Joi.number(),
-    userType:Joi.number()
+    userType:Joi.number().valid(1,2,3)
 });
+
+
+WorkExperienceDetails = Joi.object({
+  education: Joi.number().valid(1,2,3,4).required(),
+  isPreviousWorkExperience: Joi.boolean().valid(true,false).required(),
+  typeOfPreviousWorkExperience:Joi.number().valid(1,2,3),
+  previousSalary:Joi.array(),
+  preferredLocation:Joi.number().valid(1,2,3),
+  jobCategory:Joi.number().valid(1,2,3),
+  expectedSalary:Joi.number(),
+  workLookingFor:Joi.number().valid(1,2,3),
+})
 }
 
 export const userValidator = new userValidatorClass();

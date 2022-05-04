@@ -1,5 +1,7 @@
+import { Schema } from 'mongoose';
+
 export type User = { 
-    userId:string
+    userId:Schema.Types.ObjectId
 }
 declare global {
   namespace Express {

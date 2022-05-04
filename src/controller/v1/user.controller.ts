@@ -94,7 +94,7 @@ class userClass {
   ): Promise<void> {
     try {
       let details: IWorkExperience | null =
-        await userEntity.createUserExperienceDetails(req.body);
+        await userEntity.createUserExperienceDetails(req.body,req.user);
       if (details) {
         sendResponse(
           res,
@@ -104,14 +104,14 @@ class userClass {
         SendErrorResponse(res, STATUS_MSG.ERROR.INCORECT_INFORMATION);
       }
     } catch (err) {
-      SendErrorResponse(res, STATUS_MSG.ERROR.INCORECT_INFORMATION);
+      SendErrorResponse(res, err);
     }
   }
 
-  async userVideoUpload(req: Request, res: Response): Promise<void> {
+  async userExperienceVideoUpload(req: Request, res: Response): Promise<void> {
     try {
       let updatedData: IWorkExperience | null =
-        await userEntity.userVideoUpload(req.body._id, req.file);
+        await userEntity.userVideoUpload(req.user, req.file);
       if (updatedData) {
         sendResponse(res, STATUS_MSG.SUCCESS.USER_VIDEO_UPLOADED);
       } else {
