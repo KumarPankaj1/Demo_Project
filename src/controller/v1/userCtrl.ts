@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { DBENUMS, STATUS_MSG } from "../../constant/app.constant";
 import { twilioService } from "../../services/twilio.service";
 import { userEntity } from "../../entity/v1/user.entity";
-import {userExperienceEntity} from "../../entity/v1/workExperience.entity";
+import { userExperienceEntity } from "../../entity/v1/workExperience.entity";
 import { sendErrorResponse } from "./../../utils/errorhandler";
 import { sendResponse, SendErrorResponse } from "./../../utils/response";
 import { IUser, IWorkExperience } from "../../interfaces/models.interface";
@@ -17,7 +17,11 @@ class userClass {
         sendResponse(res, STATUS_MSG.SUCCESS.OTP_GENERATE_SUCCESFULLY);
       }
     } catch (err: any) {
-      SendErrorResponse(res, err);
+      if (err.status == 429 && err.message == "Too many requests") {
+        sendResponse(res, STATUS_MSG.SUCCESS.OTP_GENERATE_SUCCESFULLY);
+      } else {
+        SendErrorResponse(res, err);
+      }
     }
   }
 
@@ -28,8 +32,8 @@ class userClass {
         let user: IUser | null = await userEntity.userExists(req.body);
         if (user) {
           const token = await sessionEntity.create(user._id, {
-            deviceId: req.headers.deviceid as string || "0",
-            deviceToken: req.headers.devicetoken as string || "0",
+            deviceId: (req.headers.deviceid as string) || "0",
+            deviceToken: (req.headers.devicetoken as string) || "0",
             userType: "user",
           });
           sendResponse(
@@ -79,8 +83,7 @@ class userClass {
       );
       if (user) {
         sendResponse(res, STATUS_MSG.SUCCESS.USER_IMAGE_UPLOADED);
-      }
-      else {
+      } else {
         SendErrorResponse(res, STATUS_MSG.ERROR.INCORECT_INFORMATION);
       }
     } catch (err) {
@@ -96,7 +99,10 @@ class userClass {
   ): Promise<void> {
     try {
       let data: IWorkExperience | null =
-        await userExperienceEntity.createUserExperienceDetails(req.body, req.user);
+        await userExperienceEntity.createUserExperienceDetails(
+          req.body,
+          req.user
+        );
       if (data) {
         sendResponse(
           res,
@@ -153,7 +159,10 @@ class userClass {
 
   async userLogout(req: Request, res: Response): Promise<void> {
     try {
-      let msg = await sessionEntity.userLogout(req.user, req.headers.deviceid as string);
+      let msg = await sessionEntity.userLogout(
+        req.user,
+        req.headers.deviceid as string
+      );
       if (msg) {
         sendResponse(res, STATUS_MSG.SUCCESS.LOGOUT_SUCCESS({}));
       } else {

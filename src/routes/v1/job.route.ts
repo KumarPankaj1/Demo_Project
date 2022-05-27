@@ -2,44 +2,13 @@ import express from 'express';
 import {Job} from '../../controller/v1/jobCtrl';
 import auth from '../../middleware/auth.middleware';
 import { adminMiddleware } from '../../middleware/admin.middleware';
-import {imageUpload, videoUpload} from '../../middleware/multer.middleware'
+import {imageUpload, videoUpload} from '../../middleware/multer.middleware';
 import swaggerjsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { userMiddleware } from '../../middleware/user.middleware';
+import {options} from "../../utils/swagger"
 
 const router = express.Router();
-
-const options = {
-    definition: {
-      openapi: '3.0.0',
-      info: {
-        title: 'Demo_Project',
-        version: '1.0.0',
-      },
-      servers:[
-          {
-             url: `http://${process.env.HOST}:${process.env.PORT}`
-          }
-      ],
-      components: {
-        securitySchemes: {
-            bearerAuth: {
-                type: "apiKey",
-                name: "authorization",
-                scheme: "bearer",
-                in: "header",
-            },
-        },
-    },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
-    },
-    apis: ['./src/routes/v1/*.ts'], // files containing annotations as above
-  };
-
 const openapiSpecification = swaggerjsDoc(options);
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
