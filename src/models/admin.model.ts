@@ -3,7 +3,7 @@ import { DBENUMS } from '../constant/app.constant';
 import { IAdmin } from '../interfaces/models.interface';
 
 
-const userSchema = new Schema<IAdmin>({
+const adminSchema = new Schema<IAdmin>({
     adminName:{
         type:SchemaTypes.String,
     },
@@ -22,7 +22,7 @@ const userSchema = new Schema<IAdmin>({
       type:SchemaTypes.String
     },
     gender:{
-        type:SchemaTypes.String,
+        type:SchemaTypes.Number,
         enum:DBENUMS.GENDER,
     },
     location: {
@@ -34,7 +34,7 @@ const userSchema = new Schema<IAdmin>({
           type: [Number],
         }
     },
-    districtOfCurrentLocation: {
+    disOfCurLoc: {
         type: {
           type: String, 
           enum: ['Point'], 
@@ -43,7 +43,7 @@ const userSchema = new Schema<IAdmin>({
           type: [Number],
         }
     },
-    districtOfPermanentLocation: {
+    disOfPerLoc: {
         type: {
           type: String, 
           enum: ['Point'], 
@@ -62,6 +62,6 @@ const userSchema = new Schema<IAdmin>({
 
 
 
-const Admin = model<IAdmin>('Admin', userSchema);
+const Admin = model<IAdmin>('Admin', adminSchema);
 
 export default Admin;

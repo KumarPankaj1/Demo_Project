@@ -27,7 +27,7 @@ const userSchema = new Schema<IUser>({
       type:SchemaTypes.String
     },
     gender:{
-        type:SchemaTypes.String,
+        type:SchemaTypes.Number,
         enum:DBENUMS.GENDER,
     },
     location: {
@@ -40,7 +40,7 @@ const userSchema = new Schema<IUser>({
           type: [Number],
         }
     },
-    districtOfCurrentLocation: {
+    disOfCurLoc: {
         type: {
           type: String, 
           enum: ['Point'], 
@@ -50,7 +50,7 @@ const userSchema = new Schema<IUser>({
           type: [Number],
         }
     },
-    districtOfPermanentLocation: {
+    disOfPerLoc: {
         type: {
           type: String, 
           enum: ['Point'], 

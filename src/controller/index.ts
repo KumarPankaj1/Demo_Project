@@ -1,2 +1,2 @@
-export *  from './v1/user.controller';
-export *  from './v1/admin.controller';
+export *  from './v1/userCtrl';
+export *  from './v1/adminCtrl';

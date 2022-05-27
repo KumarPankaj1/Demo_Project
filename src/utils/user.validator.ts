@@ -17,25 +17,25 @@ class userValidatorClass {
     dateOfBirth: Joi.date(),
     emailAddress: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
     gender:Joi.number().valid(1,2,3),
-    locationLattitude:Joi.number(),
-    locationLongitude:Joi.number(),
-    districtOfCurrentLocationLattitude:Joi.number(),
-    districtOfCurrentLocationLongitude:Joi.number(),
-    districtOfPermanentLocationLattitude:Joi.number(),
-    districtOfPermanenttLocationLongitude:Joi.number(),
+    locLat:Joi.number(),
+    locLong:Joi.number(),
+    disOfCurLocLat:Joi.number(),
+    disOfCurLocLong:Joi.number(),
+    disOfPerLocLat:Joi.number(),
+    disOfPerLocLong:Joi.number(),
     userType:Joi.number().valid(1,2,3)
 });
 
 
 WorkExperienceDetails = Joi.object({
   education: Joi.number().valid(1,2,3,4).required(),
-  isPreviousWorkExperience: Joi.boolean().valid(true,false).required(),
-  typeOfPreviousWorkExperience:Joi.number().valid(1,2,3),
+  isPrevWorkExp: Joi.boolean().valid(true,false).required(),
+  typeOfPreWorkExp:Joi.array(),
   previousSalary:Joi.array(),
   preferredLocation:Joi.number().valid(1,2,3),
   jobCategory:Joi.number().valid(1,2,3),
   expectedSalary:Joi.number(),
-  workLookingFor:Joi.number().valid(1,2,3),
+  workLookingFor:Joi.array(),
 })
 }
 

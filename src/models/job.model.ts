@@ -1,8 +1,7 @@
 import { Schema, model, SchemaTypes } from "mongoose";
-import { DBENUMS } from "../constant/app.constant";
-import { IJob } from "../interfaces/models.interface";
+import { InterfaceJob } from "../interfaces/models.interface";
 
-const jobSchema = new Schema<IJob>(
+const jobSchema = new Schema<InterfaceJob.IJob>(
   {
     jobName: {
       type: SchemaTypes.String,
@@ -66,12 +65,35 @@ const jobSchema = new Schema<IJob>(
         type: SchemaTypes.String,
       },
     },
+    feedBack:[
+      {
+        userId: { type :SchemaTypes.ObjectId, ref: "User" ,
+        unique: true},
+        rating: Number,
+        feedback: String,
+      }],
+    adminId:{
+      type:SchemaTypes.ObjectId,
+      ref: 'Admin'
+    }
   },
   {
     timestamps: true,
   }
 );
 
-const Job = model<IJob>("job", jobSchema);
+
+jobSchema.pre(/^find/, function(next) {
+  // this keyword refers to the current query
+  // select method excludes or includes fields using + and -
+  this.select("-__v");
+  this.select("-createdAt");
+  this.select("-updatedAt");
+  this.select("-adminId");
+  next();
+});
+
+
+const Job = model<InterfaceJob.IJob>("job", jobSchema);
 
 export default Job;

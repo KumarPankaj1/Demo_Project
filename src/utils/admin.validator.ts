@@ -17,12 +17,12 @@ class adminValidatorClass {
     dateOfBirth: Joi.date(),
     emailAddress: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
     gender:Joi.number(),
-    locationLattitude:Joi.number(),
-    locationLongitude:Joi.number(),
-    districtOfCurrentLocationLattitude:Joi.number(),
-    districtOfCurrentLocationLongitude:Joi.number(),
-    districtOfPermanentLocationLattitude:Joi.number(),
-    districtOfPermanenttLocationLongitude:Joi.number(),
+    locLat:Joi.number(),
+    locLong:Joi.number(),
+    disOfCurLocLat:Joi.number(),
+    disOfCurLocLong:Joi.number(),
+    disOfPerLocLat:Joi.number(),
+    disOfPerLocLong:Joi.number(),
     adminType:Joi.number()
 });
 }

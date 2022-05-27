@@ -19,6 +19,12 @@ class TokenUtil {
 		}
 		return sign(payload, key, options);
 	}
+
+
+	verifyToken(token: string){
+		const tokenData:any = verify(token, <string>process.env.SECRET_KEY);
+		return tokenData
+	}
 }
 
 export const tokenUtil = new TokenUtil();

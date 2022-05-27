@@ -12,14 +12,13 @@ export namespace interfaceSession {
   export interface CreateData {
     deviceId: string;
     deviceToken: string;
-    userType:number;
-    userEntity?:string[];
+    userType:string;
   }
+ 
   export interface tokenDetails {
     userId?: Types.ObjectId;
     sessionId: Types.ObjectId;
     userType:string;
-    userEntity: string;
   }
   export interface token{
     userId: Types.ObjectId;
@@ -27,7 +26,6 @@ export namespace interfaceSession {
   }
   export interface validationInterface{
     userType:string;
-    userEntity:string;
 
   }
   

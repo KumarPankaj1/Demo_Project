@@ -45,12 +45,12 @@ export const DBENUMS = {
     FOOD_DELIVERY: 3,
     OTHER: 4,
   },
-  WORKLOOKINGFOR: {
-    CONSTRUCTION_LABOR: 1,
-    CALL_CENTER_OPERATOR: 2,
-    FOOD_DELIVERY: 3,
-    OTHER: 4,
-  },
+  WORKLOOKINGFOR: [
+    "Construction-Labor",
+    "Call-Center-Operator",
+    "Food-Delivery",
+    "Executive-BPO"
+  ],
   LOCATION: {
     NOIDA: 1,
     CHANDIGARH: 2,
@@ -65,6 +65,13 @@ export let STATUS_MSG = {
       statusCode: 400,
       success: false,
       message: "BAD REQUEST",
+      type: "BAD_REQUEST",
+    },
+
+    INCORRECT_SYNTAX:{
+      statusCode: 400,
+      success: false,
+      message: "syntax of db query is not proper",
       type: "BAD_REQUEST",
     },
 
@@ -109,7 +116,7 @@ export let STATUS_MSG = {
       statusCode: 400,
       success: false,
       type: "INVALID_CREDENTIALS",
-      message: "The phoneNumber you entered is incorrect.",
+      message: "Either twilio service has reached its limit of day or phoneNumber you entered is incorrect.",
     },
     PAGE_NOT_FOUND: {
       statusCode: 400,
@@ -138,7 +145,7 @@ export let STATUS_MSG = {
     DB_ERROR: {
       statusCode: 400,
       success: false,
-      message: "DB Error : ",
+      message: "DB Error",
       type: "DB_ERROR",
     },
     INVALID_TOKEN: {
@@ -154,7 +161,7 @@ export let STATUS_MSG = {
       message: "You are not authorized to perform this action",
       type: "UNAUTHORIZED",
     },
-    UNAUTHORIZED_ADMIN: {
+    SESSION_EXPIRED: {
       statusCode: 408,
       success: false,
       message: "Session Expired",
@@ -261,31 +268,50 @@ export let STATUS_MSG = {
     },
     CREATED: (msg?: any) => {
       return {
-        statusCode: 200,
+        statusCode: 201,
         success: true,
+        data:msg,
         message: "created Successfully",
         type: "CREATED",
-        data: msg,
       };
     },
     USER_CREATED: {
       statusCode: 200,
       success: true,
-      message: "user created Successfully",
+      message: "user profile created Successfully",
       type: "CREATED",
     },
     ADMIN_CREATED: {
       statusCode: 200,
       success: true,
-      message: "user created Successfully",
+      message: "admin created Successfully",
       type: "CREATED",
     },
-    UPDATE_SUCCESS: (title: string) => {
+    UPDATE_SUCCESS: (msg:any) => {
       return {
         statusCode: 200,
         success: true,
-        message: `${title} successfully`,
+        data:msg,
+        message: "updated successfully",
         type: "UPDATE_SUCCESS",
+      };
+    },
+    LOGOUT_SUCCESS: (msg:any) => {
+      return {
+        statusCode: 200,
+        success: true,
+        data:msg,
+        message: "logout successfully",
+        type: "LOGOUT_SUCCESS",
+      };
+    },
+    DELETE_SUCCESS: (msg:any) => {
+      return {
+        statusCode: 200,
+        success: true,
+        data:msg,
+        message: "deleted successfully",
+        type: "DELETED_SUCCESS",
       };
     },
     USER_IMAGE_UPLOADED: {
@@ -297,7 +323,7 @@ export let STATUS_MSG = {
     ADMIN_IMAGE_UPLOADED: {
       statusCode: 200,
       success: true,
-      message: "user image upload successfully",
+      message: "admin image upload successfully",
       type: "UPDATE_SUCCESS",
     },
     USER_VIDEO_UPLOADED: {
@@ -310,8 +336,63 @@ export let STATUS_MSG = {
       return {
         statusCode: 200,
         success: true,
-        message: msg,
+        data:msg,
+        message: "All jobs has been fetched successfully",
         type: "FETCH_SUCCESS",
+      };
+    },
+    COUNT_SUCCESS: (msg: any) => {
+      return {
+        statusCode: 200,
+        success: true,
+        data:msg,
+        message: "All answers count has been done successfully",
+        type: "COUNT_SUCCESS",
+      };
+    },
+    SUBMIT_SUCCESS: (msg: any) => {
+      return {
+        statusCode: 200,
+        success: true,
+        data:msg,
+        message: "your answer has been submitted successfully",
+        type: "SUBMIT_SUCCESS",
+      };
+    },
+    FEEDBACK_SUCCESS: (msg: any) => {
+      return {
+        statusCode: 200,
+        success: true,
+        data:msg,
+        message: "feedback has been submited successfully",
+        type: "FEEDBACK_SUCCESS",
+      };
+    },
+    APPLIED_SUCCESS: (msg: any) => {
+      return {
+        statusCode: 200,
+        success: true,
+        data:msg,
+        message: "you have applied at the job successfully",
+        type: "APPLIED_SUCCESS",
+      };
+    },
+    FILTER_SUCCESS: (msg: any) => {
+      return {
+        statusCode: 200,
+        success: true,
+        data:msg,
+        message: "All jobs has been filtered according to your filter successfully",
+        type: "FETCH_SUCCESS",
+      };
+    },
+    GET_SUCCESS: (msg: any) => {
+      return {
+        statusCode: 200,
+        success: true,
+        data:msg,
+        message: "user personal details and his education and previous work experience fetch successfully",
+        type: "GET_SUCCESS",
       };
     },
     OTP_GENERATE_SUCCESFULLY: {
@@ -324,18 +405,27 @@ export let STATUS_MSG = {
       return {
         statusCode: 200,
         success: true,
+        data:msg,
         message: "Login Successfully",
-        type: "LOGIN_SUCCESS",
-        data: msg,
+        type: "LOGIN_SUCCESS"
+      };
+    },
+    QUESTION_UPLOADED: (msg: any) => {
+      return {
+        statusCode: 200,
+        success: true,
+        data:msg,
+        message: "Question Upload Successfully",
+        type: "UPLOAD_SUCCESS"
       };
     },
     ADMIN_LOGGED_IN_SUCCESFULLY: (msg: any) => {
       return {
         statusCode: 200,
         success: true,
+        data:msg,
         message: "Login Successfully",
         type: "LOGIN_SUCCESS",
-        data: msg,
       };
     },
     USER_WORKEXPERIENCEDEATILS_CREATED:  {
@@ -344,5 +434,13 @@ export let STATUS_MSG = {
         message: "work experience details created Successfully",
         type: "SUCCESS",
     },
+    JOB_CREATED:(msg:any)=>{
+      return{
+      statusCode: 202,
+        success: true,
+        data:msg,
+        message: "Job created Successfully",
+        type: "SUCCESS"
+    }}
   },
 };

@@ -1,59 +1,102 @@
-import express from 'express';
-import {imageUpload,videoUpload} from '../../middleware/multer.middleware';
-import {User} from '../../controller/v1/user.controller';
-import {userValidators} from '../../middleware/userValidator.middleware';
-import {auth} from '../../middleware/user.middleware';
-import swaggerjsDoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
+import express from "express";
+import { imageUpload, videoUpload } from "../../middleware/multer.middleware";
+import { User } from "../../controller/v1/userCtrl";
+import { userValidators } from "../../middleware/userValidator.middleware";
+import auth from "../../middleware/auth.middleware";
+import { userMiddleware } from "../../middleware/user.middleware";
+import { checkSession } from "../../middleware/session.middleware";
+import swaggerjsDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 
 const router = express.Router();
 
 const options = {
-    definition: {
-      openapi: '3.0.0',
-      info: {
-        title: 'Demo_Project',
-        version: '1.0.0',
-      },
-      servers:[
-          {
-             url: `http://localhost:${process.env.port}`
-          }
-      ],
-      components: {
-        securitySchemes: {
-            bearerAuth: {
-                type: "apiKey",
-                name: "authorization",
-                scheme: "bearer",
-                in: "header",
-            },
-        },
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Demo_Project',
+      version: '1.0.0',
     },
-    security: [
-      {
-        bearerAuth: [],
-      },
+    servers:[
+        {
+           url: `http://localhost:${process.env.PORT}`,
+        }
     ],
+    components: {
+      securitySchemes: {
+          bearerAuth: {
+              type: "apiKey",
+              name: "authorization",
+              scheme: "bearer",
+              in: "header",
+          },
+      },
+  },
+  security: [
+    {
+      bearerAuth: [],
     },
-    apis: ['./src/routes/v1/*.ts'], // files containing annotations as above
-  };
+  ],
+  },
+  apis: ['./src/routes/v1/*.ts'], // files containing annotations as above
+};
 
 const openapiSpecification = swaggerjsDoc(options);
-router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
+router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
-router.route('/user/generateOtp').post(User.userGenerateOtp);
-router.route('/user/Login').post(userValidators.loginValidator,User.userLogin);
-router.route('/user/profileCreate').put(userValidators.ProfileCreateValidator,auth,User.userProfileCreate);
-router.route('/user/profilePicUpload').put(imageUpload.single('profile_pic'),auth,User.profilePicUpload);
-router.route('/user/createWorkExperienceDetails').post(userValidators.userWorkExperienceDetails,auth,User.userWorkExperienceDetails);
-router.route('/user/experienceVideoUpload').put(auth,videoUpload.single('video'),User.userExperienceVideoUpload);
+router.route("/user/generateOtp").post(User.userGenerateOtp);
+router.route("/user/Login").post(userValidators.loginValidator, User.userLogin);
+router
+  .route("/user/profileCreate")
+  .put(
+    userValidators.ProfileCreateValidator,
+    auth,
+    userMiddleware,
+    checkSession,
+    User.userProfileCreate
+  );
+router
+  .route("/user/profilePicUpload")
+  .put(
+    imageUpload.single("profile_pic"),
+    auth,
+    userMiddleware,
+    checkSession,
+    User.profilePicUpload
+  );
+router
+  .route("/user/createWorkExperienceDetails")
+  .post(
+    userValidators.userWorkExperienceDetails,
+    auth,
+    userMiddleware,
+    checkSession,
+    User.userWorkExperienceDetails
+  );
+router
+  .route("/user/experienceVideoUpload")
+  .put(
+    auth,
+    userMiddleware,
+    checkSession,
+    videoUpload.single("video"),
+    User.userExperienceVideoUpload
+  );
+router
+  .route("/user/details")
+  .get(auth, userMiddleware, checkSession, User.getUserDetails);
+router
+  .route("/user/updatedetails")
+  .patch(auth, userMiddleware, checkSession, User.updateUserDetails);
+router
+  .route("/user/logout")
+  .post(auth, userMiddleware, checkSession, User.userLogout);
 
 /**
  * @swagger
  * tags:
- *   - name: OnboardingApi's For User
- *     description: Routes to login or create complete profile for a new user.
+ *   - name: User Onboarding Module
+ *     description: Routes to login create update and get profile for a new user.
  */
 
 /**
@@ -63,11 +106,10 @@ router.route('/user/experienceVideoUpload').put(auth,videoUpload.single('video')
  *          userOtpgen:
  *              type: object
  *              properties:
- *                  phoneNumber: 
+ *                  phoneNumber:
  *                      type: Number
  *                      example: 916397471669
  */
-
 
 /**
  * @swagger
@@ -76,7 +118,7 @@ router.route('/user/experienceVideoUpload').put(auth,videoUpload.single('video')
  *          userLogin:
  *              type: object
  *              properties:
- *                  phoneNumber: 
+ *                  phoneNumber:
  *                      type: Number
  *                      example: 916397471669
  *                  code:
@@ -104,22 +146,22 @@ router.route('/user/experienceVideoUpload').put(auth,videoUpload.single('video')
  *                  emailAddress:
  *                      type: String
  *                      example: "firstname.lastname@appinventiv.com"
- *                  locationLattitude:
+ *                  locLat:
  *                      type: Number
  *                      example: 12.27
- *                  locationLongitude:
+ *                  locLong:
  *                      type: Number
  *                      example: 12.37
- *                  districtOfCurrentLocationLattitude:
+ *                  disOfCurLocLat:
  *                      type: Number
  *                      example: 13.27
- *                  districtOfCurrentLocationLongitude:
+ *                  disOfCurLocLong:
  *                      type: Number
  *                      example: 13.37
- *                  districtOfPermanentLocationLattitude:
+ *                  disOfPerLocLat:
  *                      type: Number
  *                      example: 14.27
- *                  districtOfPermanenttLocationLongitude:
+ *                  disOfPerLocLong:
  *                      type: Number
  *                      example: 14.37
  *                  userType:
@@ -128,8 +170,6 @@ router.route('/user/experienceVideoUpload').put(auth,videoUpload.single('video')
  *                      description: USER-1,CONTRACTOR-2,OTHER-3,
  */
 
-
-
 /**
  * @swagger
  *  components:
@@ -137,12 +177,9 @@ router.route('/user/experienceVideoUpload').put(auth,videoUpload.single('video')
  *          userProfilePicUpload:
  *              type: object
  *              properties:
- *                  profile_pic:
- *                     type: file   
- *                     key: image         
+ *                  profileUrl:
+ *                     type: String
  */
-
-
 
 /**
  * @swagger
@@ -155,10 +192,10 @@ router.route('/user/experienceVideoUpload').put(auth,videoUpload.single('video')
  *                      type: Number
  *                      example: 1
  *                      description: GRADUATE-1, POSTGRADUATE-2, DIPLOMA-3
- *                  isPreviousWorkExperience:
+ *                  isPreWorkExp:
  *                      type: boolean
  *                      example: true
- *                  typeOfPreviousWorkExperience:
+ *                  typeOfPreWorkExp:
  *                      type: Number
  *                      example: 1
  *                      description: CONSTRUCTION_LABOR-1,CALL_CENTER_OPERATOR-2,FOOD_DELIVERY-3,OTHER-4
@@ -177,9 +214,8 @@ router.route('/user/experienceVideoUpload').put(auth,videoUpload.single('video')
  *                      type: Number
  *                      example: 35000
  *                  workLookingFor:
- *                      type: Number
- *                      example: 2
- *                      description: CONSTRUCTION_LABOR-1,CALL_CENTER_OPERATOR-2,FOOD_DELIVERY-3,OTHER-4,
+ *                      type: [String]
+ *                      example: ["Executive-BPO","Call-Center-Operator"]
  */
 
 
@@ -190,64 +226,100 @@ router.route('/user/experienceVideoUpload').put(auth,videoUpload.single('video')
  *          userExperienceVideoUpload:
  *              type: object
  *              properties:
- *                  video:
- *                     type: file   
- *                     key: video        
+ *                  videoUrl:
+ *                     type: String
  */
 
+
+
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          userUpdateDetails:
+ *              type: object
+ *              properties:
+ *                  username:
+ *                     type: String
+ *                     example: pankaj
+ *                  dateOfBirth:
+ *                      type: Date
+ *                      exapmle: 01/02/2000
+ *                  gender:
+ *                      type: Number
+ *                      example: 1
+ *                  emailAddress:
+ *                      type: String
+ *                      example: "firstname.lastname@appinventiv.com"
+ *                  locLat:
+ *                      type: Number
+ *                      example: 12.27
+ *                  locLong:
+ *                      type: Number
+ *                      example: 12.37
+ */
 
 /**
  * @swagger
  * /user/generateOtp:
  *        post:
  *           summary: used to generate otp from phonenumber
- *           tags: [OnboardingApi's For User]
+ *           tags: [User Onboarding Module]
  *           description: This api is used for otp generation
  *           requestBody:
  *               required: true
  *               content:
  *                   application/json:
  *                       schema:
- *                            $ref: '#components/schemas/userOtpgen'               
+ *                            $ref: '#components/schemas/userOtpgen'
  *           responses:
  *                200:
  *                  description: otp generate successfully
  */
-
-
 
 /**
  * @swagger
  * /user/Login:
  *        post:
  *           summary: used to login user
- *           tags: [OnboardingApi's For User]
+ *           tags: [User Onboarding Module]
  *           description: This api is used for login
+ *           parameters:
+ *               - in: header
+ *                 name: deviceid
+ *                 description: device-id is required
+ *                 schema:
+ *                   type: string
  *           requestBody:
  *               required: true
  *               content:
  *                   application/json:
  *                       schema:
- *                            $ref: '#components/schemas/userLogin'               
+ *                            $ref: '#components/schemas/userLogin'
  *           responses:
  *                200:
  *                  description: login successfully
  */
-
 
 /**
  * @swagger
  * /user/profileCreate:
  *        put:
  *           summary: used to verify otp and for creation user account
- *           tags: [OnboardingApi's For User]
+ *           tags: [User Onboarding Module]
  *           description: This api is used for user account creation
+ *           parameters:
+ *               - in: header
+ *                 name: deviceid
+ *                 description: device-id is required
+ *                 schema:
+ *                   type: string
  *           requestBody:
  *               required: true
  *               content:
  *                   application/json:
  *                       schema:
- *                            $ref: '#components/schemas/userProfileCreate'               
+ *                            $ref: '#components/schemas/userProfileCreate'
  *           responses:
  *                200:
  *                  description: user profile created successfully
@@ -258,14 +330,20 @@ router.route('/user/experienceVideoUpload').put(auth,videoUpload.single('video')
  * /user/profilePicUpload:
  *        put:
  *           summary: used to image upload
- *           tags: [OnboardingApi's For User]
+ *           tags: [User Onboarding Module]
  *           description: This api is used for user image upload
+ *           parameters:
+ *               - in: header
+ *                 name: deviceid
+ *                 description: device-id is required
+ *                 schema:
+ *                   type: string
  *           requestBody:
  *               required: true
  *               content:
- *                   multipart/form-data:
+ *                   application/json:
  *                       schema:
- *                            $ref: '#components/schemas/userProfilePicUpload'               
+ *                            $ref: '#components/schemas/userProfilePicUpload'
  *           responses:
  *                200:
  *                  description: user image upload successfully
@@ -276,14 +354,20 @@ router.route('/user/experienceVideoUpload').put(auth,videoUpload.single('video')
  * /user/createWorkExperienceDetails:
  *        post:
  *           summary: used to add user past experience details
- *           tags: [OnboardingApi's For User]
+ *           tags: [User Onboarding Module]
  *           description: This api is used for create user experience details
+ *           parameters:
+ *               - in: header
+ *                 name: deviceid
+ *                 description: device-id is required
+ *                 schema:
+ *                   type: string
  *           requestBody:
  *               required: true
  *               content:
  *                   application/json:
  *                       schema:
- *                            $ref: '#components/schemas/userCreateWorkExperienceDetails'               
+ *                            $ref: '#components/schemas/userCreateWorkExperienceDetails'
  *           responses:
  *                200:
  *                  description: user experience details created successfully
@@ -294,21 +378,87 @@ router.route('/user/experienceVideoUpload').put(auth,videoUpload.single('video')
  * /user/experienceVideoUpload:
  *        put:
  *           summary: used to upload experience video
- *           tags: [OnboardingApi's For User]
+ *           tags: [User Onboarding Module]
  *           description: This api is used for user experience video upload
+ *           parameters:
+ *               - in: header
+ *                 name: deviceid
+ *                 description: device-id is required
+ *                 schema:
+ *                   type: string
  *           requestBody:
  *               required: true
  *               content:
- *                   multipart/form-data:
+ *                   application/json:
  *                       schema:
- *                            $ref: '#components/schemas/userExperienceVideoUpload'               
+ *                            $ref: '#components/schemas/userExperienceVideoUpload'
  *           responses:
  *                200:
  *                  description: user experience upload successfully
  */
 
+/**
+ * @swagger
+ * /user/details:
+ *        get:
+ *           summary: used to get user details
+ *           tags: [User Onboarding Module]
+ *           description: This api is used for getting details of user
+ *           parameters:
+ *               - in: header
+ *                 name: deviceid
+ *                 description: device-id is required
+ *                 schema:
+ *                   type: string
+ *           responses:
+ *                200:
+ *                  description: user details has been fetched successfully
+ */
+
+
+/**
+ * @swagger
+ * /user/updatedetails:
+ *        patch:
+ *           summary: used to update user details
+ *           tags: [User Onboarding Module]
+ *           description: This api is used for update user profile
+ *           parameters:
+ *               - in: header
+ *                 name: deviceid
+ *                 description: device-id is required
+ *                 schema:
+ *                   type: string
+ *           requestBody:
+ *               required: true
+ *               content:
+ *                   application/json:
+ *                       schema:
+ *                            $ref: '#components/schemas/userUpdateDetails'
+ *           responses:
+ *                200:
+ *                  description: user profile updated successfully
+ */
+
+
+/**
+ * @swagger
+ * /user/logout:
+ *        post:
+ *           summary: used to logout user 
+ *           tags: [User Onboarding Module]
+ *           description: This api is used for logout user
+ *           parameters:
+ *               - in: header
+ *                 name: deviceid
+ *                 description: device-id is required
+ *                 schema:
+ *                   type: string
+ *           responses:
+ *                200:
+ *                  description: user has been logout successfully
+ */
 
 export default router;
 
 
-// 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

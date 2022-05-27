@@ -1,10 +1,12 @@
 import express from 'express';
 import {imageUpload} from '../../middleware/multer.middleware';
-import {Admin} from '../../controller/v1/admin.controller';
+import {Admin} from '../../controller/v1/adminCtrl';
 import {adminValidators} from '../../middleware/adminValidator.middleware';
-import {auth} from '../../middleware/user.middleware';
+import auth from '../../middleware/auth.middleware';
+import { adminMiddleware } from '../../middleware/admin.middleware';
 import swaggerjsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import {checkSession} from "../../middleware/session.middleware";
 
 const router = express.Router();
 
@@ -43,15 +45,17 @@ const openapiSpecification = swaggerjsDoc(options);
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
 router.route('/admin/generateOtp').post(Admin.adminGenerateOtp);
-router.route('/admin/Login').post(adminValidators.loginValidator,Admin.adminLogin);
-router.route('/admin/profileCreate').put(adminValidators.ProfileCreateValidator,auth,Admin.adminProfileCreate);
-router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),auth,Admin.profilePicUpload);
+router.route('/admin/Login').post(Admin.adminLogin);
+router.route('/admin/profileCreate').put(adminValidators.ProfileCreateValidator,auth,adminMiddleware,checkSession,Admin.adminProfileCreate);
+router.route('/admin/profilePicUpload').put(auth,adminMiddleware,checkSession,imageUpload.single('profile_pic'),Admin.profilePicUpload);
+router.route('/admin/updatedetails').patch(auth,adminMiddleware,checkSession,Admin.updateAdminDetails);
+router.route('/admin/logout').post(auth,adminMiddleware,checkSession,Admin.adminLogout);
 
 /**
  * @swagger
  * tags:
- *   - name: OnboardingApi's For Admin
- *     description: Routes to login or create complete profile for a admin.
+ *   - name: Admin Onboarding Module
+ *     description: Routes to login create update and get profile for a admin.
  */
 
 /**
@@ -102,22 +106,22 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  *                  emailAddress:
  *                      type: String
  *                      example: "firstname.lastname@appinventiv.com"
- *                  locationLattitude:
+ *                  locLat:
  *                      type: Number
  *                      example: 12.27
- *                  locationLongitude:
+ *                  locLong:
  *                      type: Number
  *                      example: 12.37
- *                  districtOfCurrentLocationLattitude:
+ *                  disOfCurLocLat:
  *                      type: Number
  *                      example: 13.27
- *                  districtOfCurrentLocationLongitude:
+ *                  disOfCurLocLong:
  *                      type: Number
  *                      example: 13.37
- *                  districtOfPermanentLocationLattitude:
+ *                  disOfPerLocLat:
  *                      type: Number
  *                      example: 14.27
- *                  districtOfPermanenttLocationLongitude:
+ *                  disOfPerLocLong:
  *                      type: Number
  *                      example: 14.37
  *                  adminType:
@@ -135,9 +139,36 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  *          adminProfilePicUpload:
  *              type: object
  *              properties:
- *                  profile_pic:
- *                     type: file   
- *                     key: image         
+ *                  profileUrl:
+ *                     type: String          
+ */
+
+
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          adminUpdateDetails:
+ *              type: object
+ *              properties:
+ *                  adminName:
+ *                     type: String
+ *                     example: pankaj
+ *                  dateOfBirth:
+ *                      type: Date
+ *                      exapmle: 01/02/2000
+ *                  gender:
+ *                      type: Number
+ *                      example: 1
+ *                  emailAddress:
+ *                      type: String
+ *                      example: "firstname.lastname@appinventiv.com"
+ *                  locLat:
+ *                      type: Number
+ *                      example: 12.27
+ *                  locLong:
+ *                      type: Number
+ *                      example: 12.37
  */
 
 
@@ -146,7 +177,7 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  * /admin/generateOtp:
  *        post:
  *           summary: used to generate otp from phonenumber
- *           tags: [OnboardingApi's For Admin]
+ *           tags: [Admin Onboarding Module]
  *           description: This api is used for otp generation
  *           requestBody:
  *               required: true
@@ -166,7 +197,7 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  * /admin/Login:
  *        post:
  *           summary: used to login admin
- *           tags: [OnboardingApi's For Admin]
+ *           tags: [Admin Onboarding Module]
  *           description: This api is used for admin
  *           requestBody:
  *               required: true
@@ -185,7 +216,7 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  * /admin/profileCreate:
  *        put:
  *           summary: used to verify otp and for creation admin account
- *           tags: [OnboardingApi's For Admin]
+ *           tags: [Admin Onboarding Module]
  *           description: This api is used for admin account creation
  *           requestBody:
  *               required: true
@@ -204,17 +235,55 @@ router.route('/admin/profilePicUpload').put(imageUpload.single('profile_pic'),au
  * /admin/profilePicUpload:
  *        put:
  *           summary: used to image upload
- *           tags: [OnboardingApi's For Admin]
+ *           tags: [Admin Onboarding Module]
  *           description: This api is used for user image upload
  *           requestBody:
  *               required: true
  *               content:
- *                   multipart/form-data:
+ *                   application/json:
  *                       schema:
  *                            $ref: '#components/schemas/adminProfilePicUpload'               
  *           responses:
  *                200:
  *                  description: admin image upload successfully
+ */
+
+
+/**
+ * @swagger
+ * /admin/updatedetails:
+ *        put:
+ *           summary: used to update profile of admin
+ *           tags: [Admin Onboarding Module]
+ *           description: This api is used for admin profile update
+ *           requestBody:
+ *               required: true
+ *               content:
+ *                   application/json:
+ *                       schema:
+ *                            $ref: '#components/schemas/adminProfileCreate'               
+ *           responses:
+ *                200:
+ *                  description: admin profile updated successfully
+ */
+
+
+/**
+ * @swagger
+ * /admin/logout:
+ *        post:
+ *           summary: used to logout admin 
+ *           tags: [Admin Onboarding Module]
+ *           description: This api is used for logout admin
+ *           parameters:
+ *               - in: header
+ *                 name: deviceid
+ *                 description: device-id is required
+ *                 schema:
+ *                   type: string
+ *           responses:
+ *                200:
+ *                  description: Admin has been logout successfully
  */
 
 

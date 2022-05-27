@@ -1,52 +1,54 @@
-import {Schema,model,SchemaTypes} from 'mongoose';
-import { DBENUMS} from '../constant/app.constant';
-import { IWorkExperience } from '../interfaces/models.interface';
+import { Schema, model, SchemaTypes } from "mongoose";
+import { DBENUMS } from "../constant/app.constant";
+import { IWorkExperience } from "../interfaces/models.interface";
 
-const experienceSchema = new Schema<IWorkExperience>({
-    education:{
-        type:SchemaTypes.Number,
-        enum:DBENUMS.EDUCATION,
-        required: true
+const experienceSchema = new Schema<IWorkExperience>(
+  {
+    education: {
+      type: SchemaTypes.Number,
+      enum: DBENUMS.EDUCATION,
+      required: true,
     },
-    isPreviousWorkExperience:{
-        type:SchemaTypes.Boolean,
-        required: true
+    isPrevWorkExp: {
+      type: SchemaTypes.Boolean,
+      required: true,
     },
-    typeOfPreviousWorkExperience:{
-        type:SchemaTypes.Number,
-        enum:DBENUMS.WORKEXPERINCE
+    typeOfPreWorkExp: {
+      type: [Number],
+      enum: DBENUMS.WORKEXPERINCE,
     },
-    previousSalary:{
-        type:[Number],
+    previousSalary: {
+      type: [Number],
     },
     preferredLocation: {
-        type:SchemaTypes.Number,
-        enum:DBENUMS.LOCATION
+      type: SchemaTypes.Number,
+      enum: DBENUMS.LOCATION,
     },
-    jobCategory:{
-        type:SchemaTypes.Number,
-        enum:DBENUMS.JOBCATEGORY,
+    jobCategory: {
+      type: SchemaTypes.Number,
+      enum: DBENUMS.JOBCATEGORY,
     },
-    expectedSalary:{
-        type:SchemaTypes.Number,
+    expectedSalary: {
+      type: SchemaTypes.Number,
     },
-    workLookingFor:{
-        type:SchemaTypes.Number,
-        enum:DBENUMS.WORKLOOKINGFOR,
+    workLookingFor: {
+      type: [String],
+      enum: DBENUMS.WORKLOOKINGFOR,
     },
-    videoUrl:{
-        type:SchemaTypes.String,
+    videoUrl: {
+      type: SchemaTypes.String,
     },
-    userId:{
-        type:SchemaTypes.ObjectId,
-        ref: 'User'
-    }
-    
-},{
-    timestamps: true
-})
+    userId: {
+      type: SchemaTypes.ObjectId,
+      ref: "User",
+      unique: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-
-const workexperience = model<IWorkExperience>('Experience', experienceSchema);
+const workexperience = model<IWorkExperience>("Experience", experienceSchema);
 
 export default workexperience;
