@@ -58,7 +58,6 @@ router
 router
   .route("/user/profilePicUpload")
   .put(
-    imageUpload.single("profile_pic"),
     auth,
     userMiddleware,
     checkSession,
@@ -79,7 +78,6 @@ router
     auth,
     userMiddleware,
     checkSession,
-    videoUpload.single("video"),
     User.userExperienceVideoUpload
   );
 router
