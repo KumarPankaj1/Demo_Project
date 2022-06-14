@@ -205,6 +205,12 @@ export let STATUS_MSG = {
         type: "BAD_REQUEST",
       };
     },
+    IMAGE_NOT_PROVIDED:  {
+        statusCode: 400,
+        success: false,
+        message: "image not provided",
+        type: "BAD_REQUEST",
+      },
     ALREADY_LOGGEDIN: (title: string) => {
       return {
         statusCode: 400,

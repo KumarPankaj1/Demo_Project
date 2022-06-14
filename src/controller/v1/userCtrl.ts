@@ -83,8 +83,9 @@ class userClass {
       );
       if (user) {
         sendResponse(res, STATUS_MSG.SUCCESS.USER_IMAGE_UPLOADED);
-      } else {
-        SendErrorResponse(res, STATUS_MSG.ERROR.INCORECT_INFORMATION);
+      }
+       else {
+        SendErrorResponse(res, STATUS_MSG.ERROR.IMAGE_NOT_PROVIDED);
       }
     } catch (err) {
       console.log(err);

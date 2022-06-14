@@ -4,7 +4,7 @@ import { IUser } from "../../interfaces/models.interface";
 import { Types } from "mongoose";
 import { User } from "../../utils/App.interface";
 import Base from "../base.entity";
-import {Schema} from "mongoose";
+import { Schema } from "mongoose";
 
 class userEntityClass<T> extends Base<T> {
   constructor() {
@@ -13,7 +13,7 @@ class userEntityClass<T> extends Base<T> {
 
   async userExists(payLoad: IUser): Promise<IUser | null> {
     try {
-      const phoneNumber:number = payLoad.phoneNumber;
+      const phoneNumber: number = payLoad.phoneNumber;
       const user: IUser | null = await this.find({ phoneNumber });
       return user;
     } catch (err) {
@@ -34,7 +34,7 @@ class userEntityClass<T> extends Base<T> {
 
   async profileCreate(data: any, tokenData: User): Promise<IUser | null> {
     try {
-      const _id:Schema.Types.ObjectId= tokenData.userId;
+      const _id: Schema.Types.ObjectId = tokenData.userId;
       const filter = { _id };
       const update = {
         username: data.username,
@@ -63,17 +63,22 @@ class userEntityClass<T> extends Base<T> {
     }
   }
 
-  async userImageUpload(tokenData: User, file: any): Promise<IUser | null> {
+  async userImageUpload(tokenData: User, file: any): Promise<any> {
     try {
       const userId = tokenData.userId;
       const filter = { _id: userId };
+      if (file?.filename === undefined) {
+        return;
+      }
       const update = {
         profileUrl: `http://${process.env.HOST}:${process.env.PORT}/${file?.filename}`,
         // profileUrl: data.profileUrl,
       };
       const user: IUser | null = await this.update(filter, update);
       return user;
-    } catch (err) {
+    } catch (err: any) {
+      console.log(err.message);
+
       return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
     }
   }
@@ -124,7 +129,7 @@ class userEntityClass<T> extends Base<T> {
     const filter = { _id };
     let update: any = {};
     console.log(data);
-    
+
     if (data.locLat & data.locLong) {
       update.location = {
         type: "Point",
