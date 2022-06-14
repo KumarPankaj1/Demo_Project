@@ -13,6 +13,8 @@ app.use(express.static(path.join(__dirname, "../uploads/imageUploads")));
 const port = process.env.PORT;
 connection();
 redis.connect();
+console.log(process.env.PORT);
+
 
 app.use("/", Router.userRoute.default);
 app.use("/", Router.adminRoute.default);

@@ -16,7 +16,7 @@ router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 router.route('/admin/generateOtp').post(Admin.adminGenerateOtp);
 router.route('/admin/Login').post(Admin.adminLogin);
 router.route('/admin/profileCreate').put(adminValidators.ProfileCreateValidator,auth,adminMiddleware,checkSession,Admin.adminProfileCreate);
-router.route('/admin/profilePicUpload').put(auth,adminMiddleware,checkSession,Admin.profilePicUpload);
+router.route('/admin/profilePicUpload').put(auth,adminMiddleware,checkSession,imageUpload.single('profile_pic'),Admin.profilePicUpload);
 router.route('/admin/updatedetails').patch(auth,adminMiddleware,checkSession,Admin.updateAdminDetails);
 router.route('/admin/logout').post(auth,adminMiddleware,checkSession,Admin.adminLogout);
 
@@ -108,8 +108,9 @@ router.route('/admin/logout').post(auth,adminMiddleware,checkSession,Admin.admin
  *          adminProfilePicUpload:
  *              type: object
  *              properties:
- *                  profileUrl:
- *                     type: String          
+ *                  profile_pic:
+ *                     type: file    
+ *                     key: image    
  */
 
 

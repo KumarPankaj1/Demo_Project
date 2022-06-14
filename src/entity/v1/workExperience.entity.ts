@@ -1,6 +1,6 @@
 import userExperienceModel from "../../models/workexperience.model";
 import { STATUS_MSG } from "../../constant/app.constant";
-import {IWorkExperience } from "../../interfaces/models.interface";
+import { IWorkExperience } from "../../interfaces/models.interface";
 import { User } from "../../utils/App.interface";
 import Base from "../base.entity";
 
@@ -25,16 +25,15 @@ class userExperienceClass<T> extends Base<T> {
 
   async userVideoUpload(
     tokenData: User,
-    data: any
+    file: any
   ): Promise<IWorkExperience | null> {
     try {
       const userId = tokenData.userId;
-      const filter = {userId};
+      const filter = { userId };
       const update = {
-        videoUrl: data.videoUrl,
+        videoUrl:`http://${process.env.HOST}:${process.env.PORT}/${file?.filename}`,
       };
-      const Data: IWorkExperience | null =
-        await this.update(filter, update);
+      const Data: IWorkExperience | null = await this.update(filter, update);
       return Data;
     } catch (err) {
       console.log(err);

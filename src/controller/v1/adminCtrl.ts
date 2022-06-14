@@ -75,7 +75,7 @@ class adminClass {
     try {
       let admin: IAdmin | null = await adminEntity.adminImageUpload(
         req.user,
-        req.body
+        req.file
       );
       if (admin) {
         sendResponse(res, STATUS_MSG.SUCCESS.ADMIN_IMAGE_UPLOADED);

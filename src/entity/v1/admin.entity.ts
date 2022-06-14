@@ -106,12 +106,12 @@ class adminEntityClass<T> extends Base<T> {
     return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
   }
 
-  async adminImageUpload(tokenData: User, data: any): Promise<IAdmin | null> {
+  async adminImageUpload(tokenData: User, file: any): Promise<IAdmin | null> {
     try {
       const adminId = tokenData.userId;
       const filter = { _id: adminId };
       const update = {
-        profileUrl: data.profileUrl,
+        profileUrl: `http://${process.env.HOST}:${process.env.PORT}/${file?.filename}`,
       };
       const admin: IAdmin | null = await this.update(filter, update);
       return admin;

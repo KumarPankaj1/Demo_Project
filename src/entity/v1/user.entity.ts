@@ -63,13 +63,13 @@ class userEntityClass<T> extends Base<T> {
     }
   }
 
-  async userImageUpload(tokenData: User, data: any): Promise<IUser | null> {
+  async userImageUpload(tokenData: User, file: any): Promise<IUser | null> {
     try {
       const userId = tokenData.userId;
       const filter = { _id: userId };
       const update = {
-        // profileUrl: `http://${process.env.HOST}:${process.env.PORT}/${file?.filename}`,
-        profileUrl: data.profileUrl,
+        profileUrl: `http://${process.env.HOST}:${process.env.PORT}/${file?.filename}`,
+        // profileUrl: data.profileUrl,
       };
       const user: IUser | null = await this.update(filter, update);
       return user;

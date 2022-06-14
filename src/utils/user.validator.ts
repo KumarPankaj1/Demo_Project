@@ -29,7 +29,7 @@ class userValidatorClass {
 
 WorkExperienceDetails = Joi.object({
   education: Joi.number().valid(1,2,3,4).required(),
-  isPrevWorkExp: Joi.boolean().valid(true,false).required(),
+  isPreWorkExp: Joi.boolean().valid(true,false).required(),
   typeOfPreWorkExp:Joi.array(),
   previousSalary:Joi.array(),
   preferredLocation:Joi.number().valid(1,2,3),

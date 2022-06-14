@@ -79,7 +79,7 @@ class userClass {
     try {
       let user: IUser | null = await userEntity.userImageUpload(
         req.user,
-        req.body
+        req.file
       );
       if (user) {
         sendResponse(res, STATUS_MSG.SUCCESS.USER_IMAGE_UPLOADED);

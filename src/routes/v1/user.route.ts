@@ -61,6 +61,7 @@ router
     auth,
     userMiddleware,
     checkSession,
+    imageUpload.single('profile_pic'),
     User.profilePicUpload
   );
 router
@@ -78,6 +79,7 @@ router
     auth,
     userMiddleware,
     checkSession,
+    videoUpload.single("video"),
     User.userExperienceVideoUpload
   );
 router
@@ -175,8 +177,9 @@ router
  *          userProfilePicUpload:
  *              type: object
  *              properties:
- *                  profileUrl:
- *                     type: String
+ *                  profile_pic:
+ *                     type: file
+ *                     key: image
  */
 
 /**
@@ -224,8 +227,9 @@ router
  *          userExperienceVideoUpload:
  *              type: object
  *              properties:
- *                  videoUrl:
- *                     type: String
+ *                  video:
+ *                     type: file
+ *                     key: video
  */
 
 
@@ -339,7 +343,7 @@ router
  *           requestBody:
  *               required: true
  *               content:
- *                   application/json:
+ *                    multipart/form-data:
  *                       schema:
  *                            $ref: '#components/schemas/userProfilePicUpload'
  *           responses:
@@ -387,7 +391,7 @@ router
  *           requestBody:
  *               required: true
  *               content:
- *                   application/json:
+ *                    multipart/form-data:
  *                       schema:
  *                            $ref: '#components/schemas/userExperienceVideoUpload'
  *           responses:
