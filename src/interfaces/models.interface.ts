@@ -31,7 +31,7 @@ export interface IAdmin {
 
 export interface IWorkExperience {
     education: number,
-    isPrevWorkExp: boolean,
+    isPreWorkExp: boolean,
     typeOfPreWorkExp: number[],
     previousSalary: number[],
     preferredLocation: number,

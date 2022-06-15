@@ -9,7 +9,7 @@ const experienceSchema = new Schema<IWorkExperience>(
       enum: DBENUMS.EDUCATION,
       required: true,
     },
-    isPrevWorkExp: {
+    isPreWorkExp: {
       type: SchemaTypes.Boolean,
       required: true,
     },

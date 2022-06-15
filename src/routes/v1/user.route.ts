@@ -197,8 +197,8 @@ router
  *                      type: boolean
  *                      example: true
  *                  typeOfPreWorkExp:
- *                      type: Number
- *                      example: 1
+ *                      type: [Number]
+ *                      example: [1,2]
  *                      description: CONSTRUCTION_LABOR-1,CALL_CENTER_OPERATOR-2,FOOD_DELIVERY-3,OTHER-4
  *                  previousSalary:
  *                      type: [Number]
