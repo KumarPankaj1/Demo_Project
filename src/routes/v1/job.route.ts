@@ -52,7 +52,7 @@ router.route('/jobdelete').delete(auth,adminMiddleware,Job.deleteJob);
  * @swagger
  * /get/jobs:
  *        get:
- *           summary: used to fetch all details
+ *           summary: used to fetch all jobs
  *           tags: [Job Module]
  *           description: This api is used for fetching all jobs
  *           parameters:
