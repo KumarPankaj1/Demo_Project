@@ -22,6 +22,7 @@ class jobEntityClass<T> extends Base<T> {
     requirements: 0,
     personOfContact: 0,
     educationAndTiming: 0,
+    feedBack: 0,
   };
   async jobUpload(
     tokenData: User,
@@ -33,7 +34,7 @@ class jobEntityClass<T> extends Base<T> {
       let y: any = new Date();
       let z: any = y - x;
       data.jobAddedDays = (z / (1000 * 60 * 60 * 24)) | 0;
-      data.companyNameUrl = `http://${process.env.HOST}:${process.env.PORT}/${file?.filename}`;
+      data.companyNameUrl = `http://${process.env.HOST}:${process.env.PORT1}/${file?.filename}`;
       let Data = new JobModel({
         jobName: data.jobName,
         salary: data.salary,

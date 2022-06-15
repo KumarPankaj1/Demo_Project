@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 function connection(){
-    return connect(<string>process.env.MONGODB_URL)
+    return connect(<string>process.env.MONGODB_URM)
 
    .then(()=>{
     set("debug",true)
