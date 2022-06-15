@@ -67,8 +67,7 @@ const jobSchema = new Schema<InterfaceJob.IJob>(
     },
     feedBack:[
       {
-        userId: { type :SchemaTypes.ObjectId, ref: "User" ,
-        unique: true},
+        userId: { type :SchemaTypes.ObjectId, ref: "User"},
         rating: Number,
         feedback: String,
       }],

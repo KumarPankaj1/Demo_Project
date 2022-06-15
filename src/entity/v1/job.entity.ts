@@ -24,6 +24,12 @@ class jobEntityClass<T> extends Base<T> {
     educationAndTiming: 0,
     feedBack: 0,
   };
+  projection1 = {
+    requirements: 1,
+    personOfContact: 1,
+    educationAndTiming: 1,
+    _id: 0
+  };
   async jobUpload(
     tokenData: User,
     data: any,
@@ -34,7 +40,7 @@ class jobEntityClass<T> extends Base<T> {
       let y: any = new Date();
       let z: any = y - x;
       data.jobAddedDays = (z / (1000 * 60 * 60 * 24)) | 0;
-      data.companyNameUrl = `http://${process.env.HOST}:${process.env.PORT1}/${file?.filename}`;
+      data.companyNameUrl = `http://${process.env.HOST}:${process.env.PORT}/${file?.filename}`;
       let Data = new JobModel({
         jobName: data.jobName,
         salary: data.salary,
@@ -62,8 +68,8 @@ class jobEntityClass<T> extends Base<T> {
       });
       const job: InterfaceJob.IJob | null = await Data.save();
       return job;
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      console.log(err.message);
       return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
     }
   }
@@ -74,6 +80,8 @@ class jobEntityClass<T> extends Base<T> {
         {},
         this.projection
       );
+      console.log(jobs);
+      
       if (jobs.length > 0) {
         return jobs;
       } else {
@@ -87,7 +95,7 @@ class jobEntityClass<T> extends Base<T> {
 
   async getDetails(id: string): Promise<InterfaceJob.IJob | null> {
     try {
-      let jobs: InterfaceJob.IJob | null = await this.getModel().findById(id);
+      let jobs: InterfaceJob.IJob | null = await this.getModel().findById(id,this.projection1);
       return jobs;
     } catch (err) {
       console.log(err);
