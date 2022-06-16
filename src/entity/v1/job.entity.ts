@@ -292,6 +292,8 @@ class jobEntityClass<T> extends Base<T> {
 
   async getQuestion(id: string): Promise<any> {
     try {
+      console.log(id);
+      
       const question = await this.getModel().aggregate([
         {
           $match: { _id: new Types.ObjectId(id) },

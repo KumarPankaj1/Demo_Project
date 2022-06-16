@@ -17,14 +17,14 @@ router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 router.route('/job/create').post(auth,adminMiddleware,imageUpload.single('profile_pic'),Job.jobUpload);
 router.route('/get/jobs').get(auth,checkSession,Job.getJobs);
 router.route('/filter/jobs').post(auth,checkSession,Job.filterJob);
-router.route('/job/details/:id').get(auth,checkSession,Job.getDetails);
-router.route('/job/apply/:id').get(auth,userMiddleware,checkSession,Job.jobApply);
+router.route('/job/details/:jobid').get(auth,checkSession,Job.getDetails);
+router.route('/job/apply/:jobid').get(auth,userMiddleware,checkSession,Job.jobApply);
 router.route('/appliedjobs').get(auth,userMiddleware,checkSession,Job.getAppliedJOb);
 router.route('/intrestedjobs').get(auth,userMiddleware,checkSession,Job.getIntrestedJobs);
-router.route('/appliedjob/uploadexperiencevideo/:id').put(auth,userMiddleware,checkSession,videoUpload.single('video'),Job.uploadExperienceVideo);
+router.route('/appliedjob/uploadexpvideo/:jobid').put(auth,userMiddleware,checkSession,videoUpload.single('video'),Job.uploadExperienceVideo);
 router.route('/submitjobfeedback').patch(auth,userMiddleware,checkSession,Job.submitJobFeedback);
 router.route('/question/create').post(auth,adminMiddleware,Job.UploadQuestion);
-router.route('/question').get(auth,checkSession,Job.getQuestion);
+router.route('/get/questions/:jobid').get(auth,checkSession,Job.getQuestion);
 router.route('/submit/answer').post(auth,userMiddleware,checkSession,Job.submitAnswer);
 router.route('/answercount').get(auth,userMiddleware,checkSession,Job.answerCount);
 router.route('/jobupdate').patch(auth,adminMiddleware,Job.jobUpdate);
@@ -107,15 +107,15 @@ router.route('/jobdelete').delete(auth,adminMiddleware,Job.deleteJob);
 
 /**
  * @swagger
- * /job/details/{id}:
+ * /job/details/{jobid}:
  *        get:
  *           summary: used to get details of a job
  *           tags: [Job Module]
  *           description: This api is used for getting  job details
  *           parameters:
  *               - in: path
- *                 name: id
- *                 description: id is required
+ *                 name: jobid
+ *                 description: jobid is required
  *                 schema:
  *                   type: string
  *               - in: header
@@ -130,15 +130,15 @@ router.route('/jobdelete').delete(auth,adminMiddleware,Job.deleteJob);
 
 /**
  * @swagger
- * /job/apply/{id}:
+ * /job/apply/{jobid}:
  *        get:
  *           summary: used to apply for a job
  *           tags: [Job Module]
  *           description: This api is used for applying for a job
  *           parameters:
  *               - in: path
- *                 name: id
- *                 description: id is required
+ *                 name: jobid
+ *                 description: jobid is required
  *                 schema:
  *                   type: string
  *               - in: header
@@ -172,15 +172,15 @@ router.route('/jobdelete').delete(auth,adminMiddleware,Job.deleteJob);
 
 /**
  * @swagger
- * /appliedjob/uploadexperiencevideo/{id}:
+ * /appliedjob/uploadexpvideo/{jobid}:
  *        put:
  *           summary: used to upload job related past experience video
  *           tags: [Job Module]
  *           description: This api is used for user job related past experience video upload
  *           parameters:
  *               - in: path
- *                 name: id
- *                 description: id is required
+ *                 name: jobid
+ *                 description: jobid is required
  *                 schema:
  *                   type: string
  *               - in: header
@@ -197,6 +197,29 @@ router.route('/jobdelete').delete(auth,adminMiddleware,Job.deleteJob);
  *           responses:
  *                200:
  *                  description: user experience upload successfully
+ */
+
+/**
+ * @swagger
+ * /get/questions/{jobid}:
+ *        get:
+ *           summary: used to fetch all questions related to a perticular job
+ *           tags: [Job Module]
+ *           description: This api is used for fetching all questions that belongs to a job
+ *           parameters:
+ *               - in: header
+ *                 name: deviceid
+ *                 description: device-id is required
+ *                 schema:
+ *                   type: string
+ *               - in: path
+ *                 name: jobid
+ *                 description: jobid is required
+ *                 schema:
+ *                   type: string
+ *           responses:
+ *                200:
+ *                  description: all questions has been fetched successfully
  */
 
 

@@ -67,7 +67,7 @@ class jobClass {
 
   async getDetails(req: Request, res: Response): Promise<void> {
     try {
-      let jobs = await jobEntity.getDetails(req.params.id);
+      let jobs = await jobEntity.getDetails(req.params.jobid);
       if (jobs) {
         sendResponse(res, STATUS_MSG.SUCCESS.FETCH_SUCCESS(jobs));
       } else {
@@ -80,7 +80,7 @@ class jobClass {
 
   async jobApply(req: Request, res: Response): Promise<void> {
     try {
-      let status = await jobEntity.jobApply(req.params.id, req.user);
+      let status = await jobEntity.jobApply(req.params.jobid, req.user);
       if (status) {
         sendResponse(res, STATUS_MSG.SUCCESS.APPLIED_SUCCESS({}));
       } else {
@@ -120,7 +120,7 @@ class jobClass {
   async uploadExperienceVideo(req: Request, res: Response): Promise<void> {
     try {
       let status = await jobEntity.uploadExperienceVideo(
-        req.params.id,
+        req.params.jobid,
         req.body,
         req.file
       );
@@ -137,7 +137,7 @@ class jobClass {
   async submitJobFeedback(req: Request, res: Response): Promise<void> {
     try {
       let status = await jobEntity.submitJobFeedback(
-        req.query.id as string,
+        req.query.jobid as string,
         req.body,
         req.user
       );
@@ -156,7 +156,7 @@ class jobClass {
       let status: boolean = await jobEntity.uploadQuestion(
         req.user,
         req.body,
-        req.query.id as string,
+        req.query.jobid as string,
       );
       if (status) {
         sendResponse(res, STATUS_MSG.SUCCESS.QUESTION_UPLOADED({}));
@@ -170,7 +170,7 @@ class jobClass {
 
   async getQuestion(req: Request, res: Response): Promise<void> {
     try {
-      let questions = await jobEntity.getQuestion(req.query.id as string);
+      let questions = await jobEntity.getQuestion(req.params.jobid as string);
       if (questions) {
         sendResponse(res, STATUS_MSG.SUCCESS.FETCH_SUCCESS(questions));
       } else {
@@ -183,7 +183,7 @@ class jobClass {
 
   async submitAnswer(req: Request, res: Response): Promise<void> {
     try {
-      let status = await jobEntity.submitAnswer(req.query.id as string,req.user,req.body);
+      let status = await jobEntity.submitAnswer(req.params.jobid as string,req.user,req.body);
       if (status) {
         sendResponse(res, STATUS_MSG.SUCCESS.SUBMIT_SUCCESS({}));
       } else {
@@ -196,7 +196,7 @@ class jobClass {
 
 async answerCount(req: Request, res: Response): Promise<void>{
   try {
-    let count = await jobEntity.answerCount(req.query.id as string ,req.user);
+    let count = await jobEntity.answerCount(req.params.jobid as string ,req.user);
     if (count) {
       sendResponse(res, STATUS_MSG.SUCCESS.COUNT_SUCCESS(count));
     } else {
@@ -214,7 +214,7 @@ async jobUpdate(req: Request, res: Response): Promise<void> {
       req.user,
       req.body,
       req.file,
-      req.query.id as string
+      req.params.jobid as string
     );
     if (job) {
       sendResponse(res, STATUS_MSG.SUCCESS.UPDATE_SUCCESS({}));
@@ -229,7 +229,7 @@ async jobUpdate(req: Request, res: Response): Promise<void> {
 async deleteJob(req: Request, res: Response): Promise<void> {
   try {
     let status: InterfaceJob.IJob | null = await jobEntity.jobDelete(
-      req.query.id as string
+      req.params.jobid as string
     );
     if (status) {
       sendResponse(res, STATUS_MSG.SUCCESS.DELETE_SUCCESS({}));
