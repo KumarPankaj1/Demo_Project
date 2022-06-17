@@ -136,11 +136,15 @@ class jobClass {
 
   async submitJobFeedback(req: Request, res: Response): Promise<void> {
     try {
+      console.log(req.params.jobid);
+      
       let status = await jobEntity.submitJobFeedback(
-        req.query.jobid as string,
+        req.params.jobid as string,
         req.body,
         req.user
       );
+      console.log(status);
+      
       if (status) {
         sendResponse(res, STATUS_MSG.SUCCESS.FEEDBACK_SUCCESS({}));
       } else {

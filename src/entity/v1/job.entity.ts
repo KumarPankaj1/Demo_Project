@@ -214,7 +214,7 @@ class jobEntityClass<T> extends Base<T> {
   ): Promise<boolean> {
     try {
       let updateStatus: IJobApply | null = await jobApplyModel.findOneAndUpdate(
-        appliedJobId,
+        {appliedJobId},
         {
           experienceVideoUrl: `http://${process.env.HOST}:${process.env.PORT}/${file?.filename}`,
           description: data.description,
@@ -235,12 +235,12 @@ class jobEntityClass<T> extends Base<T> {
   }
 
   async submitJobFeedback(
-    id: string,
+    _id: string,
     data: InterfaceJob.IFeedback,
     tokenData: User
   ): Promise<boolean> {
     try {
-      const filter = id;
+      const filter = {_id};
       const update = {
         $push: {
           feedBack: {
@@ -356,7 +356,7 @@ class jobEntityClass<T> extends Base<T> {
         {
           $group: {
             _id: "$jobId",
-            total: { $sum: 1 },
+            totalAnswers: { $sum: 1 },
           },
         },
       ]);
@@ -367,7 +367,7 @@ class jobEntityClass<T> extends Base<T> {
         {
           $group: {
             _id: "$jobId",
-            total: { $sum: 1 },
+            totalQuestions: { $sum: 1 },
           },
         },
       ]);
