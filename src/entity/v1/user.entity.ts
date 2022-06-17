@@ -67,13 +67,19 @@ class userEntityClass<T> extends Base<T> {
     try {
       const userId = tokenData.userId;
       const filter = { _id: userId };
+      console.log(file);
+      
       if (file?.filename === undefined) {
+        console.log(file.filename);
+        
         return;
       }
       const update = {
         profileUrl: `http://${process.env.HOST}:${process.env.PORT}/${file?.filename}`,
         // profileUrl: data.profileUrl,
       };
+      console.log("pankaj");
+      
       const user: IUser | null = await this.update(filter, update);
       return user;
     } catch (err: any) {

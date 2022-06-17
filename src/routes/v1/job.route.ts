@@ -23,7 +23,7 @@ router.route('/appliedjobs').get(auth,userMiddleware,checkSession,Job.getApplied
 router.route('/intrestedjobs').get(auth,userMiddleware,checkSession,Job.getIntrestedJobs);
 router.route('/appliedjob/uploadexpvideo/:jobid').put(auth,userMiddleware,checkSession,videoUpload.single('video'),Job.uploadExperienceVideo);
 router.route('/submitjobfeedback').patch(auth,userMiddleware,checkSession,Job.submitJobFeedback);
-router.route('/question/create').post(auth,adminMiddleware,Job.UploadQuestion);
+router.route('/question/create/:jobid').post(auth,adminMiddleware,Job.UploadQuestion);
 router.route('/get/questions/:jobid').get(auth,checkSession,Job.getQuestion);
 router.route('/submit/answer').post(auth,userMiddleware,checkSession,Job.submitAnswer);
 router.route('/answercount').get(auth,userMiddleware,checkSession,Job.answerCount);

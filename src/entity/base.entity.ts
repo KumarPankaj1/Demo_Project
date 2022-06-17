@@ -40,6 +40,8 @@ export default class Base<T> {
       const doc = await this.getModel().findOneAndUpdate(filter, update, {
         new: true,
       });
+      console.log("doc: " + doc);
+      
       return doc;
     } catch (err) {
       return Promise.reject(err);

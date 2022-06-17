@@ -32,7 +32,7 @@ class userClass {
         let user: IUser | null = await userEntity.userExists(req.body);
         if (user) {
           const token = await sessionEntity.create(user._id, {
-            deviceId: (req.headers.deviceid as string) || "0",
+            deviceId: (req.headers.deviceid as string),
             deviceToken: (req.headers.devicetoken as string) || "0",
             userType: "user",
           });
@@ -43,7 +43,7 @@ class userClass {
         } else {
           const user = await userEntity.userInsert(req.body);
           const token = await sessionEntity.create(user._id, {
-            deviceId: (req.headers.deviceid as string) || "0",
+            deviceId: (req.headers.deviceid as string),
             deviceToken: (req.headers.devicetoken as string) || "0",
             userType: "user",
           });
@@ -81,6 +81,8 @@ class userClass {
         req.user,
         req.file
       );
+      console.log(user);
+      
       if (user) {
         sendResponse(res, STATUS_MSG.SUCCESS.USER_IMAGE_UPLOADED);
       }

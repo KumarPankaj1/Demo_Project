@@ -153,10 +153,12 @@ class jobClass {
 
   async UploadQuestion(req: Request, res: Response): Promise<void> {
     try {
+      console.log(req.params.jobid);
+      
       let status: boolean = await jobEntity.uploadQuestion(
         req.user,
         req.body,
-        req.query.jobid as string,
+        req.params.jobid as string,
       );
       if (status) {
         sendResponse(res, STATUS_MSG.SUCCESS.QUESTION_UPLOADED({}));
