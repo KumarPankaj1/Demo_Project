@@ -83,6 +83,8 @@ class redisDAO {
   ) {
     try {
       let data = await this.findSession(userId);
+      console.log(data);
+      
       if (!data) {
         await client.HSET(
           this.Session,
@@ -90,6 +92,8 @@ class redisDAO {
           JSON.stringify([sessionDetails])
         );
       } else {
+        console.log(data);
+        
         data.push(sessionDetails);
         await this.setSession(userId, data);
       }
