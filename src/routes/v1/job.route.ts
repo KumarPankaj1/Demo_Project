@@ -202,6 +202,24 @@ router.route('/jobdelete').delete(auth,adminMiddleware,Job.deleteJob);
 
 /**
  * @swagger
+ * /intrestedjobs:
+ *        get:
+ *           summary: used to fetch all intrested jobs regarding a user
+ *           tags: [Job Module]
+ *           description: This api is used for fetching all intrested jobs
+ *           parameters:
+ *               - in: header
+ *                 name: deviceid
+ *                 description: device-id is required
+ *                 schema:
+ *                   type: string
+ *           responses:
+ *                200:
+ *                  description: all intrested jobs has been fetched successfully
+ */
+
+/**
+ * @swagger
  * /appliedjob/uploadexpvideo/{jobid}:
  *        put:
  *           summary: used to upload job related past experience video

@@ -4,6 +4,8 @@ import path from "path";
 const imageStorage = multer.diskStorage({
     destination: `./uploads/imageUploads`,
     filename: (req: any, file: any, cb: any) => {
+      console.log(file);
+      
       return cb(
         null,
         `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`

@@ -173,35 +173,49 @@ class jobEntityClass<T> extends Base<T> {
     }
   }
 
-  async getIntrestedJobs(tokenData: any): Promise<any> {
-    try {
-      const interstedJobs = await experienceModel.aggregate([
-        {
-          $match: { userId: new Types.ObjectId(tokenData.userId) },
-        },
-        {
-          $lookup: {
-            from: "jobs",
-            localField: "workLookingFor",
-            foreignField: "jobName",
-            as: "IntrestedJobDetails",
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            "IntrestedJobDetails._id": 1,
-            "IntrestedJobDetails.jobName": 1,
-            "IntrestedJobDetails.salary": 1,
-            "IntrestedJobDetails.opening": 1,
-            "IntrestedJobDetails.companyName": 1,
-            "IntrestedJobDetails.companyNameUrl": 1,
-            "IntrestedJobDetails.location": 1,
-          },
-        },
-      ]);
-      return interstedJobs;
-    } catch (err) {
+  // async getIntrestedJobs(tokenData: any): Promise<any> {
+  //   try {
+  //     const interstedJobs = await experienceModel.aggregate([
+  //       {
+  //         $match: { userId: new Types.ObjectId(tokenData.userId) },
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: "jobs",
+  //           localField: "workLookingFor",
+  //           foreignField: "jobName",
+  //           as: "IntrestedJobDetails",
+  //         },
+  //       },
+  //       {
+  //         $project: {
+  //           _id: 0,
+  //           "IntrestedJobDetails._id": 1,
+  //           "IntrestedJobDetails.jobName": 1,
+  //           "IntrestedJobDetails.salary": 1,
+  //           "IntrestedJobDetails.opening": 1,
+  //           "IntrestedJobDetails.companyName": 1,
+  //           "IntrestedJobDetails.companyNameUrl": 1,
+  //           "IntrestedJobDetails.location": 1,
+  //         },
+  //       },
+  //     ]);
+  //     return interstedJobs;
+  //   } catch (err) {
+  //     console.log(err);
+  //     return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
+  //   }
+  // }
+
+
+  async getIntrestedJobs(tokenData: any): Promise<any>{
+    try{
+      const id = tokenData.userId
+      const data:any = await experienceModel.find({id});
+      let array = data[0].workLookingFor;
+      const Data = await this.getModel().find({jobName:{$in:array}},this.projection)
+      return Data;
+    }catch(err){
       console.log(err);
       return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
     }

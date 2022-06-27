@@ -70,7 +70,7 @@ class userEntityClass<T> extends Base<T> {
       console.log(file);
       
       if (file?.filename === undefined) {
-        console.log(file.filename);
+        console.log(file.filename+"po");
         
         return;
       }
@@ -84,6 +84,8 @@ class userEntityClass<T> extends Base<T> {
       return user;
     } catch (err: any) {
       console.log(err.message);
+      console.log("pankaj pa");
+      
 
       return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
     }

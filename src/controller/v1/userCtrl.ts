@@ -77,6 +77,8 @@ class userClass {
 
   async profilePicUpload(req: Request, res: Response): Promise<void> {
     try {
+      console.log("yahatak");
+      
       let user: IUser | null = await userEntity.userImageUpload(
         req.user,
         req.file
