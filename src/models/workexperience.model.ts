@@ -41,7 +41,6 @@ const experienceSchema = new Schema<IWorkExperience>(
     userId: {
       type: SchemaTypes.ObjectId,
       ref: "User",
-      unique: true,
     },
   },
   {
