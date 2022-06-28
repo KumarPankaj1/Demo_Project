@@ -12,7 +12,7 @@ import {
 } from "../../interfaces/models.interface";
 import { Types } from "mongoose";
 import { User } from "../../utils/App.interface";
-import Base from '../base.entity';
+import Base from "../base.entity";
 
 class jobEntityClass<T> extends Base<T> {
   constructor() {
@@ -28,7 +28,7 @@ class jobEntityClass<T> extends Base<T> {
     requirements: 1,
     personOfContact: 1,
     educationAndTiming: 1,
-    _id: 0
+    _id: 0,
   };
   async jobUpload(
     tokenData: User,
@@ -81,7 +81,7 @@ class jobEntityClass<T> extends Base<T> {
         this.projection
       );
       console.log(jobs);
-      
+
       if (jobs.length > 0) {
         return jobs;
       } else {
@@ -95,7 +95,10 @@ class jobEntityClass<T> extends Base<T> {
 
   async getDetails(id: string): Promise<InterfaceJob.IJob | null> {
     try {
-      let jobs: InterfaceJob.IJob | null = await this.getModel().findById(id,this.projection1);
+      let jobs: InterfaceJob.IJob | null = await this.getModel().findById(
+        id,
+        this.projection1
+      );
       return jobs;
     } catch (err) {
       console.log(err);
@@ -207,15 +210,17 @@ class jobEntityClass<T> extends Base<T> {
   //   }
   // }
 
-
-  async getIntrestedJobs(tokenData: any): Promise<any>{
-    try{
-      const id = tokenData.userId
-      const data:any = await experienceModel.find({id});
+  async getIntrestedJobs(tokenData: any): Promise<any> {
+    try {
+      const id = tokenData.userId;
+      const data: any = await experienceModel.find({ id });
       let array = data[0].workLookingFor;
-      const Data = await this.getModel().find({jobName:{$in:array}},this.projection)
+      const Data = await this.getModel().find(
+        { jobName: { $in: array } },
+        this.projection
+      );
       return Data;
-    }catch(err){
+    } catch (err) {
       console.log(err);
       return Promise.reject(STATUS_MSG.ERROR.DB_ERROR);
     }
@@ -228,7 +233,7 @@ class jobEntityClass<T> extends Base<T> {
   ): Promise<boolean> {
     try {
       let updateStatus: IJobApply | null = await jobApplyModel.findOneAndUpdate(
-        {appliedJobId},
+        { appliedJobId },
         {
           experienceVideoUrl: `http://${process.env.HOST}:${process.env.PORT}/${file?.filename}`,
           description: data.description,
@@ -254,7 +259,7 @@ class jobEntityClass<T> extends Base<T> {
     tokenData: User
   ): Promise<boolean> {
     try {
-      const filter = {_id};
+      const filter = { _id };
       const update = {
         $push: {
           feedBack: {
@@ -307,7 +312,7 @@ class jobEntityClass<T> extends Base<T> {
   async getQuestion(id: string): Promise<any> {
     try {
       console.log(id);
-      
+
       const question = await this.getModel().aggregate([
         {
           $match: { _id: new Types.ObjectId(id) },
@@ -324,6 +329,7 @@ class jobEntityClass<T> extends Base<T> {
           $project: {
             jobName: 1,
             location: 1,
+            "Questions._id": 1,
             "Questions.question": 1,
             "Questions.answers": 1,
           },
