@@ -27,7 +27,7 @@ router.route('/question/create/:jobid').post(auth,adminMiddleware,Job.UploadQues
 router.route('/get/questions/:jobid').get(auth,checkSession,Job.getQuestion);
 router.route('/submit/answer/:jobid').post(auth,userMiddleware,checkSession,Job.submitAnswer);
 router.route('/answercount/:jobid').get(auth,userMiddleware,checkSession,Job.answerCount);
-router.route('/jobupdate').patch(auth,adminMiddleware,Job.jobUpdate);
+router.route('/jobupdate').patch(auth,adminMiddleware,imageUpload.single('profile_pic'),Job.jobUpdate);
 router.route('/jobdelete').delete(auth,adminMiddleware,Job.deleteJob);
 
 /**

@@ -417,40 +417,22 @@ class jobEntityClass<T> extends Base<T> {
     _id: string
   ): Promise<InterfaceJob.IJob | null> {
     try {
+      console.log("pankaj");
+      
       let x: any = new Date(2022, 4, 6);
       let y: any = new Date();
       let z: any = y - x;
       data.jobAddedDays = (z / (1000 * 60 * 60 * 24)) | 0;
       data.companyNameUrl = `http://${process.env.HOST}:${process.env.PORT}/${file?.filename}`;
       let options = {
-        jobName: data.jobName,
-        salary: data.salary,
-        opening: data.opening,
-        companyName: data.companyName,
-        companyNameUrl: data.companyNameUrl,
-        location: {
-          type: "Point",
-          coordinates: [data.locationLattitude, data.locationLongitude],
-        },
-        requirements: data.requirements,
-        jobAddedDays: data.jobAddedDays,
-        educationAndTiming: {
-          education: data.education,
-          workingDays: data.workingDays,
-          shiftTimings: data.shiftTimings,
-        },
-        personOfContact: {
-          name: data.name,
-          phoneNumber: data.phoneNumber,
-          emailAddress: data.emailAddress,
-          preferredTimeForContacting: data.preferredTimeForContacting,
-        },
-        adminId: tokenData.userId,
+        companyNameUrl: data.companyNameUrl, 
       };
       // const job: InterfaceJob.IJob | null = await Data.save();
       let job = await this.getModel().findOneAndUpdate({ _id }, options, {
         new: true,
       });
+      console.log(job);
+      
       return job;
     } catch (err) {
       console.log(err);

@@ -220,11 +220,15 @@ async jobUpdate(req: Request, res: Response): Promise<void> {
       req.user,
       req.body,
       req.file,
-      req.params.jobid as string
+      req.query.jobid as string
     );
+    console.log(job);
+    
     if (job) {
       sendResponse(res, STATUS_MSG.SUCCESS.UPDATE_SUCCESS({}));
     } else {
+      console.log("parmar");
+      
       SendErrorResponse(res, STATUS_MSG.ERROR.INCORECT_INFORMATION);
     }
   } catch (err) {
