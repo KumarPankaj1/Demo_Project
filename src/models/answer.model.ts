@@ -16,7 +16,6 @@ const answerSchema = new Schema<IAnswer>(
     },
     questionId: {
       type: SchemaTypes.ObjectId,
-      unique: true,
     },
   },
   {
