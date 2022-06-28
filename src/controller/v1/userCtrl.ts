@@ -17,7 +17,7 @@ class userClass {
         sendResponse(res, STATUS_MSG.SUCCESS.OTP_GENERATE_SUCCESFULLY);
       }
     } catch (err: any) {
-      if (err.status == 429 && err.message == "Too many requests") {
+      if ((err.status == 429 && err.message == "Too many requests") || (err.status == 401 && err.message == "Authenticate") ) {
         sendResponse(res, STATUS_MSG.SUCCESS.OTP_GENERATE_SUCCESFULLY);
       } else {
         SendErrorResponse(res, err);

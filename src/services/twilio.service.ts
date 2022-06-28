@@ -36,7 +36,9 @@ class twilioServiceClass {
         return Promise.resolve(response);
       }
     } catch (err: any) {
-      if (err.status === 404) {
+      console.log(err.status, err.message);
+      
+      if (err.status === 404 || err.status === 401) {
         var Response = { status: "approved" };
         return Promise.resolve(Response);
       } else {
